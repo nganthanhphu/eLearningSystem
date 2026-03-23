@@ -217,3 +217,7 @@ __marimo__/
 
 #Pycharm configuration files
 .idea/
+
+#frontend 
+frontend/node_modules/
+
