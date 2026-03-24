@@ -85,13 +85,20 @@ class EnrollmentSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'student', 'enrolled_at']
 
 
-class StudentSubmissionSerializer(serializers.ModelSerializer):
+class BaseSubmissionSerializer(serializers.ModelSerializer):
     assignment = AssignmentSerializer(read_only=True)
+    student = UserSerializer(read_only=True)
 
     class Meta:
         model = Submission
         fields = ['id', 'assignment', 'student', 'content', 'submitted_at', 'grade', 'comment']
-        read_only_fields = ['id', 'student', 'submitted_at']
+        read_only_fields = ['id', 'submitted_at', 'student']
+
+
+class StudentSubmissionSerializer(BaseSubmissionSerializer):
+
+    class Meta(BaseSubmissionSerializer.Meta):
+        read_only_fields = BaseSubmissionSerializer.Meta.read_only_fields + ['grade', 'comment']
 
     def update(self, instance, validated_data):
         keys = set(validated_data.keys())
@@ -99,8 +106,10 @@ class StudentSubmissionSerializer(serializers.ModelSerializer):
             raise ValidationError('Invalid fields for update')
         return super().update(instance, validated_data)
 
-class TeacherSubmissionSerializer(StudentSubmissionSerializer):
-    student = UserSerializer(read_only=True)
+class TeacherSubmissionSerializer(BaseSubmissionSerializer):
+
+    class Meta(BaseSubmissionSerializer.Meta):
+        read_only_fields = BaseSubmissionSerializer.Meta.read_only_fields + ['content', 'assignment']
 
     def update(self, instance, validated_data):
         keys = set(validated_data.keys())
