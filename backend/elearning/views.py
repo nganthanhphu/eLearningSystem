@@ -52,6 +52,7 @@ class CourseViewSet(ModelViewSet):
     pagination_class = ItemPaginator
     permission_classes = [perms.IsTeacher]
     serializer_class = CourseSerializer
+    http_method_names = ['get', 'post', 'patch', 'delete']
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -87,6 +88,7 @@ class LessonViewSet(ModelViewSet):
     pagination_class = ItemPaginator
     permission_classes = [perms.IsTeacher]
     serializer_class = LessonSerializer
+    http_method_names = ['get', 'post', 'patch', 'delete']
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -120,6 +122,7 @@ class AssignmentViewSet(ModelViewSet):
     pagination_class = ItemPaginator
     permission_classes = [perms.IsTeacher]
     serializer_class = AssignmentSerializer
+    http_method_names = ['get', 'post', 'patch', 'delete']
 
 
     def get_permissions(self):
@@ -137,8 +140,9 @@ class EnrollmentViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.ListMode
         serializer.save(student=self.request.user)
 
 class SubmissionViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.ListModelMixin, mixins.UpdateModelMixin, mixins.RetrieveModelMixin):
-    queryset = Submission.objects.select_related('assignment', 'student').order_by('-submitted_at')
+    queryset = Submission.objects.select_related('assignment', 'student','assignment__lesson__course').order_by('-submitted_at')
     pagination_class = ItemPaginator
+    http_method_names = ['get', 'post', 'patch']
 
     def get_queryset(self):
         queryset = super().get_queryset()
