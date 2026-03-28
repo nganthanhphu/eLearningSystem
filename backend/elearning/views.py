@@ -124,7 +124,7 @@ class LessonViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.RetrieveMode
         permission_classes=[perms.IsTeacher | (perms.IsEnrolledStudentForLessonContent & perms.IsStudent)],
     )
     def get_assignments(self, request, pk=None):
-        assignments = self.get_object().assignments.order_by('created_at')
+        assignments = self.get_object().assignments.all()
         paginated_assignments = self.paginate_queryset(assignments)
         serializer = AssignmentSerializer(paginated_assignments, many=True)
         return self.get_paginated_response(serializer.data)
