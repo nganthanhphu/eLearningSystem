@@ -8,7 +8,7 @@ from elearning import perms
 from elearning.models import User, Course, Lesson, Assignment, Enrollment, Submission, Certificate
 from elearning.paginators import ItemPaginator
 from elearning.serializers import UserSerializer, CourseSerializer, LessonSerializer, AssignmentSerializer, \
-    CertificateSerializer
+    CertificateSerializer, EnrollmentSerializer, StudentSubmissionSerializer
 from elearning.utils import RoleMapper
 
 
@@ -153,6 +153,7 @@ class EnrollmentViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.ListMode
     queryset = Enrollment.objects.select_related('course').order_by('-enrolled_at')
     pagination_class = ItemPaginator
     permission_classes = [perms.IsStudent]
+    serializer_class = EnrollmentSerializer
 
     def perform_create(self, serializer):
         serializer.save(student=self.request.user)
@@ -161,6 +162,7 @@ class SubmissionViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.ListMode
     queryset = Submission.objects.select_related('assignment', 'student','assignment__lesson__course').order_by('-submitted_at')
     pagination_class = ItemPaginator
     http_method_names = ['get', 'post', 'patch']
+    serializer_class = StudentSubmissionSerializer
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -177,7 +179,9 @@ class SubmissionViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.ListMode
         serializer.save(student=self.request.user)
 
     def get_serializer_class(self):
-        return RoleMapper.get_submission_serializer(self.request.user.role)
+        if hasattr(self.request.user, 'role'):
+            return RoleMapper.get_submission_serializer(self.request.user.role)
+        return super().get_serializer_class()
 
 
 class CertificateViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):
