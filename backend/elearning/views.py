@@ -83,7 +83,7 @@ class CourseViewSet(ModelViewSet):
         return self.get_paginated_response(serializer.data)
 
 
-class LessonViewSet(ModelViewSet):
+class LessonViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin):
     queryset = Lesson.objects.order_by('-created_at')
     pagination_class = ItemPaginator
     permission_classes = [perms.IsTeacher]
@@ -117,7 +117,7 @@ class LessonViewSet(ModelViewSet):
         return self.get_paginated_response(serializer.data)
 
 
-class AssignmentViewSet(ModelViewSet):
+class AssignmentViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin):
     queryset = Assignment.objects
     pagination_class = ItemPaginator
     permission_classes = [perms.IsTeacher]
@@ -129,6 +129,20 @@ class AssignmentViewSet(ModelViewSet):
         if self.action in ['list', 'retrieve']:
             return [permissions.IsAuthenticated()]
         return super().get_permissions()
+
+    @swagger_auto_schema(
+        method='get',
+        operation_summary='Get submission for an assignment',
+        responses={200: 'SubmissionSerializer()'}
+    )
+    @action(methods=['get'], detail=True, url_path='submissions', permission_classes=[perms.IsStudent])
+    def get_submission(self, request, pk=None):
+        assignment = self.get_object()
+        submission = assignment.submissions.filter(student=request.user).first()
+        if not submission:
+            return Response({'detail': 'No submission found for this assignment'}, status=status.HTTP_404_NOT_FOUND)
+        serializer = RoleMapper.get_submission_serializer(request.user.role)(submission)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class EnrollmentViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.ListModelMixin):
