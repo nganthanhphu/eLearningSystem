@@ -18,7 +18,7 @@ class UserViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.RetrieveModelM
     parser_classes = [MultiPartParser]
 
     def get_permissions(self):
-        if self.action in ['retrieve']:
+        if self.action in ['retrieve', 'get_current_user']:
             return [permissions.IsAuthenticated()]
         return [permissions.AllowAny()]
 
@@ -68,6 +68,8 @@ class CourseViewSet(ModelViewSet):
     def get_permissions(self):
         if self.action in ['list']:
             return [permissions.AllowAny()]
+        elif self.action in ['get_lessons']:
+            return [(perms.IsEnrolledStudentForCourseContent | perms.IsTeacher)()]
         elif self.action in ['update', 'partial_update', 'destroy']:
             return [perms.IsCourseTeacher()]
         return super().get_permissions()
@@ -106,6 +108,8 @@ class LessonViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.RetrieveMode
     def get_permissions(self):
         if self.action in ['retrieve']:
             return [(perms.IsEnrolledStudentForLesson | perms.IsTeacher)()]
+        elif self.action in ['get_assignments']:
+            return [(perms.IsTeacher | (perms.IsEnrolledStudentForLessonContent & perms.IsStudent))()]
         return super().get_permissions()
 
     @swagger_auto_schema(
@@ -137,6 +141,8 @@ class AssignmentViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.Retrieve
     def get_permissions(self):
         if self.action in ['retrieve']:
             return [(perms.IsEnrolledStudentForAssignment | perms.IsTeacher)()]
+        elif self.action in ['get_submission']:
+            return [perms.IsStudent()]
         return super().get_permissions()
 
     @swagger_auto_schema(
