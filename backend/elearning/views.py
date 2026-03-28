@@ -18,7 +18,7 @@ class UserViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.RetrieveModelM
     parser_classes = [MultiPartParser]
 
     def get_permissions(self):
-        if self.action in ['retriever']:
+        if self.action in ['retrieve']:
             return [permissions.IsAuthenticated()]
         return [permissions.AllowAny()]
 
@@ -48,7 +48,7 @@ class UserViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.RetrieveModelM
 
 
 class CourseViewSet(ModelViewSet):
-    queryset = Course.objects.filter(active=True).select_related('teacher').order_by('-created_at').filter(active=True)
+    queryset = Course.objects.filter(active=True).select_related('teacher').order_by('-created_at')
     pagination_class = ItemPaginator
     permission_classes = [perms.IsTeacher]
     serializer_class = CourseSerializer
@@ -79,16 +79,16 @@ class CourseViewSet(ModelViewSet):
         instance.active = False
         instance.save()
 
-    @action(methods=['get'], detail=True, url_path='lessons', permission_classes=[permissions.IsAuthenticated])
+    @action(methods=['get'], detail=True, url_path='lessons', permission_classes=[perms.IsEnrolledStudentForCourseContent | perms.IsTeacher])
     def get_lessons(self, request, pk=None):
-        lessons = self.get_object().lessons.order_by('created_at')
+        lessons = self.get_object().lessons.select_related('course').order_by('created_at')
         paginated_lessons = self.paginate_queryset(lessons)
         serializer = LessonSerializer(paginated_lessons, many=True)
         return self.get_paginated_response(serializer.data)
 
 
 class LessonViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin):
-    queryset = Lesson.objects.order_by('-created_at')
+    queryset = Lesson.objects.select_related('course').order_by('-created_at')
     pagination_class = ItemPaginator
     permission_classes = [perms.IsTeacher]
     serializer_class = LessonSerializer
@@ -104,8 +104,8 @@ class LessonViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.RetrieveMode
         return queryset
 
     def get_permissions(self):
-        if self.action in ['list', 'retrieve']:
-            return [permissions.IsAuthenticated()]
+        if self.action in ['retrieve']:
+            return [(perms.IsEnrolledStudentForLesson | perms.IsTeacher)()]
         return super().get_permissions()
 
     @swagger_auto_schema(
@@ -113,7 +113,12 @@ class LessonViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.RetrieveMode
         operation_summary='Get assignments for a lesson',
         responses={200: 'AssignmentSerializer(many=True)'}
     )
-    @action(methods=['get'], detail=True, url_path='assignments', permission_classes=[permissions.IsAuthenticated])
+    @action(
+        methods=['get'],
+        detail=True,
+        url_path='assignments',
+        permission_classes=[perms.IsTeacher | (perms.IsEnrolledStudentForLessonContent & perms.IsStudent)],
+    )
     def get_assignments(self, request, pk=None):
         assignments = self.get_object().assignments.order_by('created_at')
         paginated_assignments = self.paginate_queryset(assignments)
@@ -122,7 +127,7 @@ class LessonViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.RetrieveMode
 
 
 class AssignmentViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin):
-    queryset = Assignment.objects
+    queryset = Assignment.objects.select_related('lesson__course')
     pagination_class = ItemPaginator
     permission_classes = [perms.IsTeacher]
     serializer_class = AssignmentSerializer
@@ -130,8 +135,8 @@ class AssignmentViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.Retrieve
 
 
     def get_permissions(self):
-        if self.action in ['list', 'retrieve']:
-            return [permissions.IsAuthenticated()]
+        if self.action in ['retrieve']:
+            return [(perms.IsEnrolledStudentForAssignment | perms.IsTeacher)()]
         return super().get_permissions()
 
     @swagger_auto_schema(
@@ -142,7 +147,7 @@ class AssignmentViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.Retrieve
     @action(methods=['get'], detail=True, url_path='submissions', permission_classes=[perms.IsStudent])
     def get_submission(self, request, pk=None):
         assignment = self.get_object()
-        submission = assignment.submissions.filter(student=request.user).first()
+        submission = assignment.submissions.select_related('student').filter(student=request.user).first()
         if not submission:
             return Response({'detail': 'No submission found for this assignment'}, status=status.HTTP_404_NOT_FOUND)
         serializer = RoleMapper.get_submission_serializer(request.user.role)(submission)
@@ -154,6 +159,10 @@ class EnrollmentViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.ListMode
     pagination_class = ItemPaginator
     permission_classes = [perms.IsStudent]
     serializer_class = EnrollmentSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.filter(student=self.request.user)
 
     def perform_create(self, serializer):
         serializer.save(student=self.request.user)
@@ -170,9 +179,9 @@ class SubmissionViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.ListMode
 
     def get_permissions(self):
         if self.action.__eq__('create'):
-            return [perms.IsStudent()]
+            return [perms.IsEnrolledStudentForAssignmentSubmission()]
         elif self.action in ['update', 'partial_update']:
-            return [perms.IsSubmissionOwner(), perms.IsTeacher()]
+            return [(perms.IsSubmissionOwner | perms.IsTeacher)()]
         return [permissions.IsAuthenticated()]
 
     def perform_create(self, serializer):
