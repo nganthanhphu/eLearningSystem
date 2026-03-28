@@ -18,3 +18,11 @@ class RoleMapper:
             UserRole.TEACHER : lambda qs: qs.filter(assignment__lesson__course__teacher=user)
         }
         return MAPPING.get(user.role, lambda qs: qs)(queryset)
+
+    @staticmethod
+    def get_course_queryset(user, queryset):
+        MAPPING = {
+            UserRole.STUDENT : lambda qs: qs,
+            UserRole.TEACHER : lambda qs: qs.filter(teacher=user)
+        }
+        return MAPPING.get(user.role, lambda qs: qs)(queryset)

@@ -48,7 +48,7 @@ class UserViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.RetrieveModelM
 
 
 class CourseViewSet(ModelViewSet):
-    queryset = Course.objects.filter(active=True).select_related('teacher').order_by('-created_at')
+    queryset = Course.objects.filter(active=True).select_related('teacher').order_by('-created_at').filter(active=True)
     pagination_class = ItemPaginator
     permission_classes = [perms.IsTeacher]
     serializer_class = CourseSerializer
@@ -56,6 +56,8 @@ class CourseViewSet(ModelViewSet):
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        if hasattr(self.request.user, 'role'):
+            queryset = RoleMapper.get_course_queryset(self.request.user, queryset)
         kw = self.request.query_params.get('kw')
         if kw:
             queryset = queryset.filter(title__icontains=kw)
@@ -66,6 +68,8 @@ class CourseViewSet(ModelViewSet):
     def get_permissions(self):
         if self.action in ['list']:
             return [permissions.AllowAny()]
+        elif self.action in ['update', 'partial_update', 'destroy']:
+            return [perms.IsCourseTeacher()]
         return super().get_permissions()
 
     def perform_create(self, serializer):

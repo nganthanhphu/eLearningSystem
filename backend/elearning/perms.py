@@ -15,3 +15,7 @@ class IsStudent(IsAuthenticated):
 class IsSubmissionOwner(IsAuthenticated):
     def has_object_permission(self, request, view, submission):
         return super().has_object_permission(request, view, submission) and submission.student == request.user
+
+class IsCourseTeacher(IsAuthenticated):
+    def has_object_permission(self, request, view, course):
+        return super().has_object_permission(request, view, course) and course.teacher == request.user
