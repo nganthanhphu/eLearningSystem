@@ -1,0 +1,54 @@
+import { Routes, Route } from "react-router-dom";
+import Home from "../pages/Home";
+import Login from "../pages/Login";
+import Register from "../pages/Register";
+import Course from "../pages/Course";
+import Enrollments from "../pages/student/Enrollments";
+import Lessons from "../pages/student/Lessons";
+import Assignments from "../pages/student/Assignments";
+import Submission from "../pages/student/Submission";
+import ProtectedRoute from "../components/ProtectedRoute";
+import { ROLES } from "../config/roles";
+
+export default function AppRouter() {
+  return (
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/courses" element={<Course />} />
+      <Route
+        path="/student/enrollments"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+            <Enrollments />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/student/courses/:courseId/lessons"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+            <Lessons />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/student/lessons/:lessonId/assignments"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+            <Assignments />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/student/assignments/:assignmentId/submission"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+            <Submission />
+          </ProtectedRoute>
+        }
+      />
+    </Routes>
+  );
+}
