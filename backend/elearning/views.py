@@ -195,7 +195,7 @@ class SubmissionViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.ListMode
 
     def get_serializer_class(self):
         if hasattr(self.request.user, 'role'):
-            return RoleMapper.get_submission_serializer(self.request.user.role)
+            return RoleMapper.get_submission_serializer(self.request.user)
         return super().get_serializer_class()
 
 
