@@ -154,8 +154,6 @@ class AssignmentViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.Retrieve
     def get_submission(self, request, pk=None):
         assignment = self.get_object()
         submission = assignment.submissions.select_related('student').filter(student=request.user).first()
-        if not submission:
-            return Response({'detail': 'No submission found for this assignment'}, status=status.HTTP_404_NOT_FOUND)
         serializer = RoleMapper.get_submission_serializer(request.user)(submission)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
