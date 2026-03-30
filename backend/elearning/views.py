@@ -5,7 +5,7 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 from elearning import perms
-from elearning.models import User, Course, Lesson, Assignment, Enrollment, Submission, Certificate
+from elearning.models import User, Course, Lesson, Assignment, Enrollment, Submission, Certificate, UserRole
 from elearning.paginators import ItemPaginator
 from elearning.serializers import UserSerializer, CourseSerializer, LessonSerializer, AssignmentSerializer, \
     CertificateSerializer, EnrollmentSerializer, StudentSubmissionSerializer
@@ -190,6 +190,10 @@ class SubmissionViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.ListMode
 
     def perform_create(self, serializer):
         serializer.save(student=self.request.user)
+
+    def perform_update(self, serializer):
+        if hasattr(self.request.user, 'role') and self.request.user.role == UserRole.STUDENT:
+            serializer.save(grade=None, comment=None)
 
     def get_serializer_class(self):
         if hasattr(self.request.user, 'role'):
