@@ -40,9 +40,11 @@ class UserSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
         if instance.avatar:
-            data['avatar'] = instance.avatar.url
+            if hasattr(instance.avatar, "url"):
+                data['avatar'] = instance.avatar.url
+            else:
+                data['avatar'] = instance.avatar
         return data
-
 
 class CourseSerializer(serializers.ModelSerializer):
     class Meta:

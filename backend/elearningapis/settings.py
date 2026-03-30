@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
+import sys
 
 import pymysql
 import cloudinary.api
@@ -109,6 +110,12 @@ DATABASES = {
         'PORT': os.getenv("DATABASE_PORT", "3306")
     }
 }
+
+if 'test' in sys.argv:
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': ':memory:',
+    }
 
 pymysql.version_info = (2, 3, 1, "final", 0)
 pymysql.install_as_MySQLdb()
