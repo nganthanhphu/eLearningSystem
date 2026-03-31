@@ -148,10 +148,11 @@ class TeacherSubmissionSerializer(BaseSubmissionSerializer):
 
 
 class CertificateSerializer(serializers.ModelSerializer):
-    student = serializers.ReadOnlyField(source='enrollment.student.get_full_name')
+    first_name = serializers.ReadOnlyField(source='enrollment.student.first_name')
+    last_name = serializers.ReadOnlyField(source='enrollment.student.last_name')
     course = serializers.ReadOnlyField(source='enrollment.course.title')
 
     class Meta:
         model = Certificate
-        fields = ['id', 'enrollment', 'issued_at', 'student', 'course']
-        read_only_fields = ['id', 'enrollment', 'issued_at', 'student', 'course']
+        fields = ['id', 'enrollment', 'issued_at', 'first_name','last_name', 'course']
+        read_only_fields = ['id', 'enrollment', 'issued_at', 'first_name','last_name', 'course']
