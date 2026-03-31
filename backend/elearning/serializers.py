@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.validators import UniqueTogetherValidator
 
-from elearning.models import User, Course, Lesson, Assignment, Enrollment, Submission
+from elearning.models import User, Course, Lesson, Assignment, Enrollment, Submission, Certificate
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -147,10 +147,11 @@ class TeacherSubmissionSerializer(BaseSubmissionSerializer):
         return super().update(instance, validated_data)
 
 
-class CertificateSerializer(serializers.Serializer):
+class CertificateSerializer(serializers.ModelSerializer):
     student = serializers.ReadOnlyField(source='enrollment.student.get_full_name')
     course = serializers.ReadOnlyField(source='enrollment.course.title')
 
     class Meta:
+        model = Certificate
         fields = ['id', 'enrollment', 'issued_at', 'student', 'course']
         read_only_fields = ['id', 'enrollment', 'issued_at', 'student', 'course']
