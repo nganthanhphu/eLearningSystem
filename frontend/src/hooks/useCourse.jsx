@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { authApis, endpoints } from "../api/Apis";
+import { toast } from "react-toastify";
 
 export const useCourses = () => {
   const [cookies] = useCookies(["access_token"]);
@@ -10,20 +11,43 @@ export const useCourses = () => {
   const [previous, setPrevious] = useState(null);
   const [keyword, setKeyword] = useState("");
 
-  const fetchCourses = useCallback(async (url, params = {}) => {
-    setLoading(true);
+  const fetchCourses = useCallback(
+    async (url, params = {}) => {
+      setLoading(true);
+      try {
+        const response = await authApis(cookies.access_token).get(url, {
+          params,
+        });
+        const data = response?.data || {};
+        setCourses(data?.results || []);
+        setNext(data?.next || null);
+        setPrevious(data?.previous || null);
+      } catch (error) {
+        console.error("Fetch error:", error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [cookies.access_token],
+  );
+
+  const postCourse = async (courseData) => {
     try {
-      const response = await authApis(cookies.access_token).get(url, { params });
-      const data = response?.data || {};
-      setCourses(data?.results || []);
-      setNext(data?.next || null);
-      setPrevious(data?.previous || null);
+      const response = await authApis(cookies.access_token).post(
+        endpoints["courses"],
+        courseData,
+      );
+      if (response.status === 201) {
+        toast.success("Tạo khóa học thành công");
+        fetchCourses(endpoints["courses"]);
+        return true;
+      }
     } catch (error) {
-      console.error("Fetch error:", error);
-    } finally {
-      setLoading(false);
+      console.error("Create course error:", error);
+      toast.error("Tạo khóa học thất bại");
+      return false;
     }
-  }, [cookies.access_token]);
+  };
 
   useEffect(() => {
     const delaySearch = setTimeout(() => {
@@ -41,5 +65,15 @@ export const useCourses = () => {
     if (previous) fetchCourses(previous);
   };
 
-  return { courses, loading, next, previous, goToNextPage, goToPreviousPage, keyword, setKeyword };
+  return {
+    courses,
+    loading,
+    next,
+    previous,
+    postCourse,
+    goToNextPage,
+    goToPreviousPage,
+    keyword,
+    setKeyword,
+  };
 };

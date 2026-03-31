@@ -9,6 +9,7 @@ import Assignments from "../pages/student/Assignments";
 import Submission from "../pages/student/Submission";
 import ProtectedRoute from "../components/ProtectedRoute";
 import { ROLES } from "../config/roles";
+import TLessons from "../pages/teacher/Lesson";
 
 export default function AppRouter() {
   return (
@@ -46,6 +47,14 @@ export default function AppRouter() {
         element={
           <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
             <Submission />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/teacher/courses/:courseId/lessons"
+        element={
+          <ProtectedRoute>
+            <TLessons />
           </ProtectedRoute>
         }
       />
