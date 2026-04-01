@@ -133,6 +133,8 @@ class StudentSubmissionSerializer(BaseSubmissionSerializer):
         keys = set(validated_data.keys())
         if keys - {'content'}:
             raise ValidationError('Invalid fields for update')
+        validated_data['grade'] = None
+        validated_data['comment'] = None
         return super().update(instance, validated_data)
 
 

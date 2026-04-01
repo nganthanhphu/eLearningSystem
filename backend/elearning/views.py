@@ -191,10 +191,6 @@ class SubmissionViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.ListMode
     def perform_create(self, serializer):
         serializer.save(student=self.request.user)
 
-    def perform_update(self, serializer):
-        if hasattr(self.request.user, 'role') and self.request.user.role == UserRole.STUDENT:
-            serializer.save(grade=None, comment=None)
-
     def get_serializer_class(self):
         if hasattr(self.request.user, 'role'):
             return RoleMapper.get_submission_serializer(self.request.user)
