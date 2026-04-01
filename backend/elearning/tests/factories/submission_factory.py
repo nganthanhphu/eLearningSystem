@@ -14,5 +14,9 @@ class SubmissionFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def enroll(self, create, extracted, **kwargs):
-        if create:
-            EnrollmentFactory(student=self.student, course=self.assignment.lesson.course)
+        from elearning.models import Enrollment
+
+        if not Enrollment.objects.filter(student=self.student,
+            course=self.assignment.lesson.course).exists():
+            EnrollmentFactory(student=self.student,
+                course=self.assignment.lesson.course)
