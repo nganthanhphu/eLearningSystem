@@ -83,19 +83,7 @@ export default function Lesson({ courseId }) {
                 <div className="d-flex align-items-baseline gap-2 mb-1">
                   <span className="fw-medium fs-5">{lesson.title}</span>
                 </div>
-                {lesson.video_url && (
-                  <div className="mb-2">
-                    <a
-                      href={lesson.video_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-decoration-none text-primary fw-medium"
-                      style={{ fontSize: "0.9rem" }}
-                    >
-                      [Link Video Bài Giảng]
-                    </a>
-                  </div>
-                )}
+
                 {lesson.content && (
                   <p
                     className="text-muted mb-0"
