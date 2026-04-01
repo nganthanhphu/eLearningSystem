@@ -9,7 +9,7 @@ import Assignments from "../pages/student/Assignments";
 import Submission from "../pages/student/Submission";
 import ProtectedRoute from "../components/ProtectedRoute";
 import { ROLES } from "../config/roles";
-import TLessons from "../pages/teacher/Lesson";
+import TLessons from "../pages/teacher/CourseDetail";
 
 export default function AppRouter() {
   return (

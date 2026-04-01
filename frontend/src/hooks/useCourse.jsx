@@ -49,6 +49,54 @@ export const useCourses = () => {
     }
   };
 
+  const updateCourse = async (id, courseData) => {
+    try {
+      const response = await authApis(cookies.access_token).patch(
+        endpoints["course-detail"](id),
+        courseData,
+      );
+      if (response.status === 200) {
+        toast.success("Cập nhật khóa học thành công");
+        fetchCourses();
+        return true;
+      }
+    } catch (error) {
+      console.error("Update course error:", error);
+      toast.error("Cập nhật khóa học thất bại");
+      return false;
+    }
+  };
+
+  const deleteCourse = async (id) => {
+    try {
+      const response = await authApis(cookies.access_token).delete(
+        endpoints["course-detail"](id),
+      );
+      if (response.status === 204) {
+        toast.success("Xóa khóa học thành công");
+        fetchCourses();
+        return true;
+      }
+    } catch (error) {
+      console.error("Delete course error:", error);
+      toast.error("Xóa khóa học thất bại");
+      return false;
+    }
+  };
+
+  const getCourseDetail = async (id) => {
+    try {
+      const response = await authApis(cookies.access_token).get(
+        endpoints["course-detail"](id),
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Get course detail error:", error);
+      toast.error("Lấy chi tiết khóa học thất bại");
+      return null;
+    }
+  };
+
   useEffect(() => {
     const delaySearch = setTimeout(() => {
       fetchCourses(endpoints["courses"], { kw: keyword });
@@ -70,6 +118,9 @@ export const useCourses = () => {
     loading,
     next,
     previous,
+    updateCourse,
+    deleteCourse,
+    getCourseDetail,
     postCourse,
     goToNextPage,
     goToPreviousPage,
