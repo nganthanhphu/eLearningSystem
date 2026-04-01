@@ -2,7 +2,7 @@ from django.db import transaction
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from elearning.models import User, Submission, Enrollment, Assignment
+from elearning.models import User, Submission, Enrollment, Assignment,Certificate
 from elearning.tasks import send_welcome_email, send_certificate_email
 
 
@@ -45,8 +45,9 @@ def update_enrollment_progress(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=Enrollment)
 def create_certificate(sender, instance, created, **kwargs):
-    if not created and not hasattr(instance, 'certificate') and instance.progress >= 90 :
-        instance.certificate_set.get_or_create(enrollment=instance)
+    if not created and instance.progress >= 90:
+        Certificate.objects.get_or_create(enrollment=instance)
+
         transaction.on_commit(
             lambda: send_certificate_email.delay(instance.pk)
         )
