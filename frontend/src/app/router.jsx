@@ -9,6 +9,8 @@ import Assignments from "../pages/student/Assignments";
 import Submission from "../pages/student/Submission";
 import ProtectedRoute from "../components/ProtectedRoute";
 import { ROLES } from "../config/roles";
+import Certificates from "../pages/student/Certificates";
+import CertificateCard from "../pages/student/CertificateCard";
 
 export default function AppRouter() {
   return (
@@ -22,6 +24,22 @@ export default function AppRouter() {
         element={
           <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
             <Enrollments />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/student/certificates"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+            <Certificates />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/certificates/:cerId"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+            <CertificateCard />
           </ProtectedRoute>
         }
       />
