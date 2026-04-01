@@ -19,6 +19,11 @@ class BaseAPITestCase(APITestCase):
 
     def logout(self):
         self.client.force_authenticate(user=None)
+
+    def create_student(self, **kwargs):
+        return UserFactory(role=UserRole.STUDENT, **kwargs)
+
+
     def create_course(self, teacher=None, **kwargs):
         return CourseFactory(
             teacher=teacher or self.teacher,
