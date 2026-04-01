@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import { useCourseDetail } from "../../hooks/useCourseDetail";
 import { useParams, useNavigate } from "react-router-dom";
-import CourseModal from "../../components/CourseModal";
-import { useLessons } from "../../hooks/useLessons";
+import CourseModal from "../../components/teacher-modals/CourseModal";
 import { useCourses } from "../../hooks/useCourse";
+import Lesson from "./Lesson";
 
 export default function CourseDetail() {
   const { courseId } = useParams();
   const { courseDetail, loading } = useCourseDetail(courseId);
-  const { lessons, loading: lessonsLoading } = useLessons(courseId);
   const { deleteCourse, updateCourse } = useCourses();
   const navigate = useNavigate();
 
@@ -49,9 +48,7 @@ export default function CourseDetail() {
         <div>
           <h2 className="fw-bold mb-2 text-primary">{courseDetail?.title}</h2>
           <p className="text-muted" style={{ whiteSpace: "pre-line" }}>
-            {courseDetail?.description || (
-              <span className="fst-italic">Không có mô tả</span>
-            )}
+            {courseDetail?.description || <span>Không có mô tả</span>}
           </p>
         </div>
         <div className="d-flex gap-2">
@@ -66,32 +63,7 @@ export default function CourseDetail() {
 
       <hr />
 
-      <div className="mt-4">
-        <h4 className="fw-bold mb-3">Danh sách Bài học</h4>
-        {lessonsLoading ? (
-          <p className="text-muted">Đang tải danh sách bài học...</p>
-        ) : lessons && lessons.length > 0 ? (
-          <ul className="list-group">
-            {lessons.map((lesson, index) => (
-              <li
-                key={lesson.id}
-                className="list-group-item d-flex justify-content-between align-items-center p-3"
-              >
-                <div className="d-flex align-items-baseline gap-3">
-                  <span className="fw-bold text-secondary">
-                    Bài {index + 1}:
-                  </span>
-                  <span className="fw-medium fs-5">{lesson.title}</span>
-                </div>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <div className="alert alert-light border border-secondary text-center text-muted p-4">
-            Khóa học này hiện chưa có bài học nào.
-          </div>
-        )}
-      </div>
+      <Lesson courseId={courseId} />
 
       <CourseModal
         show={showModal}

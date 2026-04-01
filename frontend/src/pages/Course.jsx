@@ -6,7 +6,7 @@ import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { ROLES } from "../config/roles";
-import CourseModal from "../components/CourseModal";
+import CourseModal from "../components/teacher-modals/CourseModal";
 
 export default function Course() {
   const {
