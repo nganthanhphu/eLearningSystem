@@ -14,7 +14,7 @@ const Submission = () => {
   const { assignmentId } = useParams();
   const { submission, setSubmission, loading, error } =
     useSubmission(assignmentId);
-  const { patchSubmission } = useSubmissionforPatch();
+  const { postSubmission, patchSubmission } = useSubmissionforPatch();
   // chế độ sửa
   const [modify, setModify] = useState(false);
   const [content, setContent] = useState("");
@@ -27,10 +27,12 @@ const Submission = () => {
 
   const handleClickPatch = async () => {
     if (!content.trim()) return;
-    await patchSubmission(submission.id, content);
+    if (submission?.id) await patchSubmission(submission.id, content);
+    else await postSubmission(+assignmentId, content);
     setSubmission((prev) => ({
       ...prev,
       content: content,
+      submitted_at: new Date().toISOString(),
       grade: null,
       comment: null,
     }));
