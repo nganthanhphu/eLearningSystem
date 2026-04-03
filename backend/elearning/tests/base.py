@@ -23,6 +23,8 @@ class BaseAPITestCase(APITestCase):
     def create_student(self, **kwargs):
         return UserFactory(role=UserRole.STUDENT, **kwargs)
 
+    def create_teacher(self,**kwargs):
+        return UserFactory(role=UserRole.TEACHER,**kwargs)
 
     def create_course(self, teacher=None, **kwargs):
         return CourseFactory(

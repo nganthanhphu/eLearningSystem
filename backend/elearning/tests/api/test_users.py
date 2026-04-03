@@ -22,6 +22,7 @@ class UserAPITestCase(BaseAPITestCase):
     def test_get_current_user_success(self):
         self.auth(self.student)
         res = self.client.get(self.current_user_url)
+
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data["username"], self.student.username)
 
@@ -35,15 +36,11 @@ class UserAPITestCase(BaseAPITestCase):
             "role": UserRole.STUDENT,
             "avatar":"image/upload/v1234567890/test_avatar.jpg"
         }
-
         res = self.client.post(self.register_url, data)
-
-        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
-
         user = User.objects.get(username="newuser")
 
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         self.assertEqual(user.role, UserRole.STUDENT)
-
         self.assertTrue(user.check_password("123456"))
 
     def test_register_ignore_role_field(self):

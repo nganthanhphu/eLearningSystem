@@ -11,6 +11,7 @@ class SubmissionAPITestCase(BaseAPITestCase):
         url = reverse("submission-list")
         res = self.client.post(url, {"assignment": assignment.id, "content": "My submission"})
         submission = Submission.objects.get(id=res.data["id"])
+
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         self.assertEqual(res.data["assignment"]["id"], assignment.id)
         self.assertEqual(submission.student, self.student)
@@ -40,14 +41,13 @@ class SubmissionAPITestCase(BaseAPITestCase):
         self.auth(other_student)
         url = reverse("submission-detail", args=[submission.id])
         res = self.client.patch(url, {"content": "Try update"})
+
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_teacher_update_any_submission_success(self):
         submission = self.create_submission()
-
         self.auth(self.teacher)
         url = reverse("submission-detail", args=[submission.id])
-
         res = self.client.patch(url, {"grade": 9, "comment": "Good work"})
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
@@ -59,13 +59,14 @@ class SubmissionAPITestCase(BaseAPITestCase):
         self.auth(self.student)
         url = reverse("submission-list")
         res = self.client.get(url)
-        self.assertEqual(res.status_code, status.HTTP_200_OK)
         ids = [s["id"] for s in res.data["results"]]
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertIn(submission.id, ids)
 
     def test_unauthenticated_forbidden(self):
-        submission = self.create_submission()
         self.logout()
         url = reverse("submission-list")
         res = self.client.get(url)
+
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)

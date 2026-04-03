@@ -27,6 +27,7 @@ class EnrollmentAPITestCase(BaseAPITestCase):
         self.auth(self.teacher)
         url = reverse("enrollment-list")
         res = self.client.get(url)
+
         self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_teacher_create_enrollment_forbidden(self):
@@ -34,4 +35,5 @@ class EnrollmentAPITestCase(BaseAPITestCase):
         self.auth(self.teacher)
         url = reverse("enrollment-list")
         res = self.client.post(url, {"course": course.id})
+
         self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
