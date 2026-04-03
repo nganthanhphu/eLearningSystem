@@ -10,6 +10,7 @@ import Submission from "../pages/student/Submission";
 import ProtectedRoute from "../components/ProtectedRoute";
 import { ROLES } from "../config/roles";
 import TLessons from "../pages/teacher/CourseDetail";
+import TAssignments from "../pages/teacher/Assignments";
 
 export default function AppRouter() {
   return (
@@ -26,6 +27,7 @@ export default function AppRouter() {
           </ProtectedRoute>
         }
       />
+
       <Route
         path="/student/courses/:courseId/lessons"
         element={
@@ -53,8 +55,16 @@ export default function AppRouter() {
       <Route
         path="/teacher/courses/:courseId/lessons"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
             <TLessons />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/teacher/lessons/:lessonId/assignments"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
+            <TAssignments />
           </ProtectedRoute>
         }
       />

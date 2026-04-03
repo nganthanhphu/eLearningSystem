@@ -3,6 +3,7 @@ import { useLessons } from "../../hooks/useLessons";
 import LessonModal from "../../components/teacher-modals/LessonModal";
 import { endpoints } from "../../api/Apis";
 import PaginationControls from "../../components/PaginationControls";
+import { useNavigate } from "react-router-dom";
 
 export default function Lesson({ courseId }) {
   const {
@@ -20,6 +21,7 @@ export default function Lesson({ courseId }) {
 
   const [showModal, setShowModal] = useState(false);
   const [editingLesson, setEditingLesson] = useState(null);
+  const navigate = useNavigate();
 
   const handleCreateNew = () => {
     setEditingLesson(null);
@@ -94,6 +96,15 @@ export default function Lesson({ courseId }) {
                 )}
               </div>
               <div className="d-flex gap-2 flex-shrink-0">
+                <button
+                  className="btn btn-info btn-sm px-3 text-white"
+                  onClick={() =>
+                    navigate(`/teacher/lessons/${lesson.id}/assignments`)
+                  }
+                  disabled={loading}
+                >
+                  Bài tập
+                </button>
                 <button
                   className="btn btn-warning btn-sm px-3"
                   onClick={() => handleEdit(lesson)}
