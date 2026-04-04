@@ -61,8 +61,6 @@ class CourseViewSet(ModelViewSet):
         kw = self.request.query_params.get('kw')
         if kw:
             queryset = queryset.filter(title__icontains=kw)
-        if self.action.__eq__('get_lessons'):
-            queryset = queryset.prefetch_related('lessons')
         return queryset
 
     def get_permissions(self):
@@ -83,7 +81,7 @@ class CourseViewSet(ModelViewSet):
 
     @action(methods=['get'], detail=True, url_path='lessons', permission_classes=[perms.IsEnrolledStudentForCourseContent | perms.IsTeacher])
     def get_lessons(self, request, pk=None):
-        lessons = self.get_object().lessons.select_related('course').order_by('created_at')
+        lessons = Lesson.objects.filter(course_id=pk).select_related('course').order_by('created_at')
         paginated_lessons = self.paginate_queryset(lessons)
         serializer = LessonSerializer(paginated_lessons, many=True)
         return self.get_paginated_response(serializer.data)
@@ -101,8 +99,6 @@ class LessonViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.RetrieveMode
         kw = self.request.query_params.get('kw')
         if kw:
             queryset = queryset.filter(title__icontains=kw)
-        if self.action.__eq__('get_assignments'):
-            queryset = queryset.prefetch_related('assignments')
         return queryset
 
     def get_permissions(self):
@@ -124,7 +120,7 @@ class LessonViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.RetrieveMode
         permission_classes=[perms.IsTeacher | (perms.IsEnrolledStudentForLessonContent & perms.IsStudent)],
     )
     def get_assignments(self, request, pk=None):
-        assignments = self.get_object().assignments.all()
+        assignments = Assignment.objects.filter(lesson_id=pk).order_by('id')
         paginated_assignments = self.paginate_queryset(assignments)
         serializer = AssignmentSerializer(paginated_assignments, many=True)
         return self.get_paginated_response(serializer.data)
@@ -153,13 +149,13 @@ class AssignmentViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.Retrieve
     @action(methods=['get'], detail=True, url_path='submissions', permission_classes=[perms.IsStudent])
     def get_submission(self, request, pk=None):
         assignment = self.get_object()
-        submission = assignment.submissions.select_related('student').filter(student=request.user).first()
+        submission = assignment.submissions.select_related('student', 'assignment').filter(student=request.user).first()
         serializer = RoleMapper.get_submission_serializer(request.user)(submission)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class EnrollmentViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.ListModelMixin):
-    queryset = Enrollment.objects.select_related('course').order_by('-enrolled_at')
+    queryset = Enrollment.objects.select_related('course', 'course__teacher').order_by('-enrolled_at')
     pagination_class = ItemPaginator
     permission_classes = [perms.IsStudent]
     serializer_class = EnrollmentSerializer
