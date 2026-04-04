@@ -181,14 +181,14 @@ class SubmissionViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.ListMode
     def get_queryset(self):
         queryset = super().get_queryset()
         queryset = RoleMapper.get_submission_queryset(self.request.user, queryset)
-        is_all = self.request.query_params.get('all')
-        if is_all and is_all.__eq__('True'):
-            return queryset
-        else:
+        graded = self.request.query_params.get('graded')
+        if graded and graded.__eq__('false'):
             return queryset.filter(grade=None)
+        else:
+            return queryset
 
     def get_permissions(self):
-        if self.action.__eq__('create'):
+        if self.action in ['create']:
             return [perms.IsEnrolledStudentForAssignmentSubmission()]
         elif self.action in ['update', 'partial_update']:
             return [(perms.IsSubmissionOwner | perms.IsCourseTeacherForSubmission)()]
