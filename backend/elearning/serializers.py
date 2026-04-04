@@ -1,3 +1,7 @@
+from traceback import print_tb
+
+from django.utils import timezone
+
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.validators import UniqueTogetherValidator
@@ -148,10 +152,11 @@ class StudentSubmissionSerializer(BaseSubmissionSerializer):
 
     def update(self, instance, validated_data):
         keys = set(validated_data.keys())
-        if keys - {'content'}:
+        if len(keys) == 0 or keys - {'content'}:
             raise ValidationError('Invalid fields for update')
         validated_data['grade'] = None
         validated_data['comment'] = None
+        validated_data['submitted_at'] = timezone.now()
         return super().update(instance, validated_data)
 
 
