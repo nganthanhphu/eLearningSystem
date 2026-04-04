@@ -79,7 +79,8 @@ class CourseViewSet(ModelViewSet):
         instance.active = False
         instance.save()
 
-    @action(methods=['get'], detail=True, url_path='lessons', permission_classes=[perms.IsEnrolledStudentForCourseContent | perms.IsTeacher])
+    @action(methods=['get'], detail=True, url_path='lessons',
+            permission_classes=[perms.IsEnrolledStudentForCourseContent | perms.IsTeacher])
     def get_lessons(self, request, pk=None):
         lessons = Lesson.objects.filter(course_id=pk).select_related('course').order_by('created_at')
         paginated_lessons = self.paginate_queryset(lessons)
@@ -87,7 +88,8 @@ class CourseViewSet(ModelViewSet):
         return self.get_paginated_response(serializer.data)
 
 
-class LessonViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin):
+class LessonViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
+                    mixins.DestroyModelMixin):
     queryset = Lesson.objects.select_related('course').order_by('-created_at')
     pagination_class = ItemPaginator
     permission_classes = [perms.IsTeacher]
@@ -126,13 +128,13 @@ class LessonViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.RetrieveMode
         return self.get_paginated_response(serializer.data)
 
 
-class AssignmentViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin):
+class AssignmentViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
+                        mixins.DestroyModelMixin):
     queryset = Assignment.objects.select_related('lesson__course')
     pagination_class = ItemPaginator
     permission_classes = [perms.IsTeacher]
     serializer_class = AssignmentSerializer
     http_method_names = ['get', 'post', 'patch', 'delete']
-
 
     def get_permissions(self):
         if self.action in ['retrieve']:
@@ -167,15 +169,23 @@ class EnrollmentViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.ListMode
     def perform_create(self, serializer):
         serializer.save(student=self.request.user)
 
-class SubmissionViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.ListModelMixin, mixins.UpdateModelMixin, mixins.RetrieveModelMixin):
-    queryset = Submission.objects.select_related('assignment', 'student','assignment__lesson__course').order_by('-submitted_at')
+
+class SubmissionViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.ListModelMixin, mixins.UpdateModelMixin,
+                        mixins.RetrieveModelMixin):
+    queryset = Submission.objects.select_related('assignment', 'student', 'assignment__lesson__course').order_by(
+        '-submitted_at')
     pagination_class = ItemPaginator
     http_method_names = ['get', 'post', 'patch']
     serializer_class = StudentSubmissionSerializer
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        return RoleMapper.get_submission_queryset(self.request.user, queryset)
+        queryset = RoleMapper.get_submission_queryset(self.request.user, queryset)
+        is_all = self.request.query_params.get('all')
+        if is_all and is_all.__eq__('True'):
+            return queryset
+        else:
+            return queryset.filter(grade=None)
 
     def get_permissions(self):
         if self.action.__eq__('create'):
@@ -200,6 +210,4 @@ class CertificateViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveM
     serializer_class = CertificateSerializer
 
     def get_queryset(self):
-        return self.queryset.filter(enrollment__student = self.request.user )
-
-
+        return self.queryset.filter(enrollment__student=self.request.user)
