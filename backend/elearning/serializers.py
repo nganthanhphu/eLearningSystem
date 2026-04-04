@@ -46,6 +46,23 @@ class UserSerializer(serializers.ModelSerializer):
                 data['avatar'] = instance.avatar
         return data
 
+
+class MinimalUserViewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['avatar', 'first_name', 'last_name']
+        read_only_fields = ['avatar', 'first_name', 'last_name']
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if instance.avatar:
+            if hasattr(instance.avatar, "url"):
+                data['avatar'] = instance.avatar.url
+            else:
+                data['avatar'] = instance.avatar
+        return data
+
+
 class CourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
@@ -54,7 +71,7 @@ class CourseSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        data['teacher'] = UserSerializer(instance.teacher).data if instance.teacher else None
+        data['teacher'] = MinimalUserViewSerializer(instance.teacher).data if instance.teacher else None
         return data
 
 
@@ -121,7 +138,7 @@ class BaseSubmissionSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data['assignment'] = AssignmentSerializer(instance.assignment).data if instance.assignment else None
-        data['student'] = UserSerializer(instance.student).data if instance.student else None
+        data['student'] = MinimalUserViewSerializer(instance.student).data if instance.student else None
         return data
 
 
@@ -156,5 +173,5 @@ class CertificateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Certificate
-        fields = ['id', 'enrollment', 'issued_at', 'first_name','last_name', 'course']
-        read_only_fields = ['id', 'enrollment', 'issued_at', 'first_name','last_name', 'course']
+        fields = ['id', 'enrollment', 'issued_at', 'first_name', 'last_name', 'course']
+        read_only_fields = ['id', 'enrollment', 'issued_at', 'first_name', 'last_name', 'course']
