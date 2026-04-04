@@ -64,3 +64,16 @@ class IsEnrolledStudentForAssignmentSubmission(IsStudent):
 class IsEnrolledStudentForLessonContent(IsAuthenticated):
     def has_object_permission(self, request, view, lesson):
         return super().has_object_permission(request,view,lesson) and _is_enrolled(request.user, lesson.course)
+
+
+class IsCourseTeacherForLesson(IsCourseTeacher):
+    def has_object_permission(self, request, view, lesson):
+        return super().has_object_permission(request, view, lesson.course)
+
+class IsCourseTeacherForAssignment(IsCourseTeacher):
+    def has_object_permission(self, request, view, assignment):
+        return super().has_object_permission(request, view, assignment.lesson.course)
+
+class IsCourseTeacherForSubmission(IsCourseTeacher):
+    def has_object_permission(self, request, view, submission):
+        return super().has_object_permission(request, view, submission.assignment.lesson.course)

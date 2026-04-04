@@ -92,7 +92,7 @@ class LessonViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.RetrieveMode
                     mixins.DestroyModelMixin):
     queryset = Lesson.objects.select_related('course').order_by('-created_at')
     pagination_class = ItemPaginator
-    permission_classes = [perms.IsTeacher]
+    permission_classes = [perms.IsCourseTeacherForLesson]
     serializer_class = LessonSerializer
     http_method_names = ['get', 'post', 'patch', 'delete']
 
@@ -132,7 +132,7 @@ class AssignmentViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.Retrieve
                         mixins.DestroyModelMixin):
     queryset = Assignment.objects.select_related('lesson__course')
     pagination_class = ItemPaginator
-    permission_classes = [perms.IsTeacher]
+    permission_classes = [perms.IsCourseTeacherForAssignment]
     serializer_class = AssignmentSerializer
     http_method_names = ['get', 'post', 'patch', 'delete']
 
@@ -191,7 +191,7 @@ class SubmissionViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.ListMode
         if self.action.__eq__('create'):
             return [perms.IsEnrolledStudentForAssignmentSubmission()]
         elif self.action in ['update', 'partial_update']:
-            return [(perms.IsSubmissionOwner | perms.IsTeacher)()]
+            return [(perms.IsSubmissionOwner | perms.IsCourseTeacherForSubmission)()]
         return [permissions.IsAuthenticated()]
 
     def perform_create(self, serializer):
