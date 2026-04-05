@@ -9,8 +9,10 @@ import Assignments from "../pages/student/Assignments";
 import Submission from "../pages/student/Submission";
 import ProtectedRoute from "../components/ProtectedRoute";
 import { ROLES } from "../config/roles";
-import Certificates from "../pages/student/Certificates";
-import CertificateCard from "../pages/student/CertificateCard";
+import TLessons from "../pages/teacher/CourseDetail";
+import TAssignments from "../pages/teacher/Assignments";
+import TSubmission from "../pages/teacher/TSubmission";
+import TSubmissionDetail from "../pages/teacher/TSubmissionDetail";
 
 export default function AppRouter() {
   return (
@@ -27,22 +29,7 @@ export default function AppRouter() {
           </ProtectedRoute>
         }
       />
-      <Route
-        path="/student/certificates"
-        element={
-          <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
-            <Certificates />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/certificates/:cerId"
-        element={
-          <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
-            <CertificateCard />
-          </ProtectedRoute>
-        }
-      />
+
       <Route
         path="/student/courses/:courseId/lessons"
         element={
@@ -64,6 +51,38 @@ export default function AppRouter() {
         element={
           <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
             <Submission />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/teacher/courses/:courseId/lessons"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
+            <TLessons />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/teacher/lessons/:lessonId/assignments"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
+            <TAssignments />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/teacher/submissions"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
+            <TSubmission />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/teacher/submissions/:submissionId"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
+            <TSubmissionDetail />
           </ProtectedRoute>
         }
       />

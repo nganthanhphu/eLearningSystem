@@ -24,6 +24,7 @@ export default function Header() {
   const isLoggedIn = Boolean(cookies.access_token);
 
   const isStudent = userInfo?.role === ROLES.STUDENT;
+  const isTeacher = userInfo?.role === ROLES.TEACHER;
 
   const handleLogout = () => {
     removeCookie("access_token", { path: "/" });
@@ -35,7 +36,10 @@ export default function Header() {
     <header>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-secondary px-3 py-2">
         <div className="container-fluid">
-          <a href="/" className="navbar-brand d-flex align-items-center gap-2 fw-bold fs-5">
+          <a
+            href="/"
+            className="navbar-brand d-flex align-items-center gap-2 fw-bold fs-5"
+          >
             E-Learning System
           </a>
           <button
@@ -66,6 +70,16 @@ export default function Header() {
                     onClick={() => navigate("/student/enrollments")}
                   >
                     Khóa học của tôi
+                  </button>
+                </li>
+              )}
+              {isLoggedIn && isTeacher && (
+                <li className="nav-item">
+                  <button
+                    className="nav-link fw-medium fs-6 text-light"
+                    onClick={() => navigate("/teacher/submissions")}
+                  >
+                    Danh sách bài của học sinh
                   </button>
                 </li>
               )}

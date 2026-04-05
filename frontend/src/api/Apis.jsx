@@ -15,6 +15,7 @@ export const endpoints = {
     `/courses/${courseId}/lessons/${lessonId}/`,
 
   assignments: (lessonId) => `/lessons/${lessonId}/assignments/`,
+  "assignment-manage": "/assignments/",
   "assignment-detail": (assignmentId) => `/assignments/${assignmentId}/`,
 
   submissions: (assignmentId) => `/assignments/${assignmentId}/submissions/`,
@@ -23,6 +24,9 @@ export const endpoints = {
 
   certificates: "/certificates/",
   "certificate-detail": (id) => `/certificates/${id}/`,
+
+  "lesson-manage": "/lessons/",
+  "lesson-item": (id) => `/lessons/${id}/`,
 
   enrollments: "/enrollments/",
 };
