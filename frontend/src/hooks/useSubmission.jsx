@@ -19,6 +19,45 @@ const normalizeSubmission = (data) => {
   return null;
 };
 
+export const useSubmissionforPatch = () => {
+  const [cookies] = useCookies(["access_token"]);
+  const postSubmission = useCallback(
+    async (assignmentId, content) => {
+      try {
+        return await authApis(cookies.access_token).post(
+          endpoints["submission"],
+          {
+            assignment: assignmentId,
+            content: content,
+          },
+        );
+      } catch (error) {
+        throw error;
+        console.log("ENDPOINT:", endpoints["submission"]);
+      }
+    },
+    [cookies.access_token],
+  );
+  const patchSubmission = useCallback(
+    async (submissionId, content) => {
+      try {
+        return await authApis(cookies.access_token).patch(
+          endpoints["submission-detail"](submissionId),
+          {
+            content: content,
+          },
+        );
+      } catch (error) {
+        throw error;
+      }
+    },
+    [cookies.access_token],
+  );
+
+  return { postSubmission, patchSubmission };
+};
+
+
 export const useSubmission = (assignmentId) => {
   const [cookies] = useCookies(["access_token"]);
   const [submission, setSubmission] = useState(null);

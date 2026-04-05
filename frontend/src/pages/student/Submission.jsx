@@ -9,11 +9,31 @@ const formatDateTime = (value) => {
 
 const Submission = () => {
   const { assignmentId } = useParams();
-  const { submission, loading, error } = useSubmission(assignmentId);
+
+  const { submission, setSubmission, loading, error } =
+    useSubmission(assignmentId);
+  const { postSubmission, patchSubmission } = useSubmissionforPatch();
+  // chế độ sửa
+  const [modify, setModify] = useState(false);
+  const [content, setContent] = useState("");
+
 
   const assignmentTitle = submission?.assignment?.title || "Bài tập";
   const assignmentContent = submission?.assignment?.content || "Không có nội dung bài tập.";
-
+  const handleClickPatch = async () => {
+    if (!content.trim()) return;
+    if (submission?.id) await patchSubmission(submission.id, content);
+    else await postSubmission(+assignmentId, content);
+    setSubmission((prev) => ({
+      ...prev,
+      content: content,
+      submitted_at: new Date().toISOString(),
+      grade: null,
+      comment: null,
+    }));
+    setModify(false);
+  };
+  
   return (
     <div className="card shadow-sm border-0">
       <div className="card-body p-4">
