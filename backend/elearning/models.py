@@ -51,6 +51,9 @@ class Enrollment(models.Model):
     enrolled_at = models.DateTimeField(auto_now_add=True)
     progress = models.FloatField(default=0.0)
 
+    class Meta:
+        unique_together = ('student', 'course')
+
 
 class Submission(models.Model):
     assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE, related_name='submissions')
