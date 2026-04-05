@@ -20,6 +20,7 @@ export const endpoints = {
 
   submissions: (assignmentId) => `/assignments/${assignmentId}/submissions/`,
   "submission-detail": (submissionId) => `/submissions/${submissionId}/`,
+  submission: "/submissions/",
 
   certificates: "/certificates/",
   "certificate-detail": (id) => `/certificates/${id}/`,

@@ -11,6 +11,8 @@ import ProtectedRoute from "../components/ProtectedRoute";
 import { ROLES } from "../config/roles";
 import TLessons from "../pages/teacher/CourseDetail";
 import TAssignments from "../pages/teacher/Assignments";
+import TSubmission from "../pages/teacher/TSubmission";
+import TSubmissionDetail from "../pages/teacher/TSubmissionDetail";
 
 export default function AppRouter() {
   return (
@@ -65,6 +67,22 @@ export default function AppRouter() {
         element={
           <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
             <TAssignments />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/teacher/submissions"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
+            <TSubmission />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/teacher/submissions/:submissionId"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.TEACHER]}>
+            <TSubmissionDetail />
           </ProtectedRoute>
         }
       />
