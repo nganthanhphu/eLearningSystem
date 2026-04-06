@@ -13,6 +13,7 @@ import TLessons from "../pages/teacher/CourseDetail";
 import TAssignments from "../pages/teacher/Assignments";
 import TSubmission from "../pages/teacher/TSubmission";
 import TSubmissionDetail from "../pages/teacher/TSubmissionDetail";
+import SAllSubmission from "../pages/student/SAllSubmission";
 
 export default function AppRouter() {
   return (
@@ -51,6 +52,14 @@ export default function AppRouter() {
         element={
           <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
             <Submission />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/student/submissions"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+            <SAllSubmission />
           </ProtectedRoute>
         }
       />

@@ -64,14 +64,24 @@ export default function Header() {
                 </button>
               </li>
               {isLoggedIn && isStudent && (
-                <li className="nav-item">
-                  <button
-                    className="nav-link fw-medium fs-6 text-light"
-                    onClick={() => navigate("/student/enrollments")}
-                  >
-                    Khóa học của tôi
-                  </button>
-                </li>
+                <>
+                  <li className="nav-item">
+                    <button
+                      className="nav-link fw-medium fs-6 text-light"
+                      onClick={() => navigate("/student/enrollments")}
+                    >
+                      Khóa học của tôi
+                    </button>
+                  </li>
+                  <li className="nav-item">
+                    <button
+                      className="nav-link fw-medium fs-6 text-light"
+                      onClick={() => navigate("/student/submissions")}
+                    >
+                      Danh sách bài đã nộp
+                    </button>
+                  </li>
+                </>
               )}
               {isLoggedIn && isTeacher && (
                 <li className="nav-item">

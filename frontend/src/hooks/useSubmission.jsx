@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { authApis, endpoints } from "../api/Apis";
-import { useParams } from "react-router-dom";
 
 const normalizeSubmission = (data) => {
   if (Array.isArray(data)) {
@@ -33,7 +32,6 @@ export const useSubmissionforPatch = () => {
         );
       } catch (error) {
         throw error;
-        console.log("ENDPOINT:", endpoints["submission"]);
       }
     },
     [cookies.access_token],
@@ -56,7 +54,6 @@ export const useSubmissionforPatch = () => {
 
   return { postSubmission, patchSubmission };
 };
-
 
 export const useSubmission = (assignmentId) => {
   const [cookies] = useCookies(["access_token"]);
@@ -91,7 +88,13 @@ export const useSubmission = (assignmentId) => {
     fetchSubmission();
   }, [fetchSubmission]);
 
-  return { submission, loading, error, refetch: fetchSubmission };
+  return {
+    submission,
+    setSubmission,
+    loading,
+    error,
+    refetch: fetchSubmission,
+  };
 };
 
 export const useSubmissions = (showAll) => {

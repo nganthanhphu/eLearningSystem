@@ -3,9 +3,8 @@ import { useSubmissions } from "../../hooks/useSubmission";
 import { useNavigate } from "react-router-dom";
 import PaginationControls from "../../components/PaginationControls";
 
-export default function TSubmission() {
+export default function SAllSubmission() {
   const navigate = useNavigate();
-  const [showAll, setShowAll] = useState(false);
   const {
     submissions,
     loading,
@@ -13,20 +12,14 @@ export default function TSubmission() {
     previous,
     goToNextPage,
     goToPreviousPage,
-  } = useSubmissions(showAll);
-  const handleButtonClick = (submissionId) => {
-    navigate(`/teacher/submissions/${submissionId}`);
+  } = useSubmissions(true);
+  const handleButtonClick = (assignmentId) => {
+    navigate(`/student/assignments/${assignmentId}/submission`);
   };
   return (
     <div className="mt-4">
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h4 className="fw-bold mb-0">Danh sách bài nộp của học sinh</h4>
-        <button
-          className="btn btn-primary"
-          onClick={() => setShowAll(!showAll)}
-        >
-          {showAll ? "Chỉ hiện bài cần chấm " : "Hiện tất cả"}
-        </button>
       </div>
 
       {loading ? (
@@ -63,9 +56,9 @@ export default function TSubmission() {
                 </div>
                 <button
                   className="btn btn-warning btn-sm px-3"
-                  onClick={() => handleButtonClick(submission?.id)}
+                  onClick={() => handleButtonClick(submission?.assignment?.id)}
                 >
-                  {submission?.grade ? "Chấm bài" : "Chấm lại"}
+                  Chi tiết
                 </button>
               </div>
             </li>
