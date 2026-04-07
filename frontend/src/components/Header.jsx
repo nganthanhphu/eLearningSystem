@@ -98,7 +98,11 @@ export default function Header() {
               {isLoggedIn ? (
                 <>
                   {userInfo && (
-                    <li className="nav-item d-flex align-items-center gap-2">
+                    <li
+                      className="nav-item d-flex align-items-center gap-2"
+                      onClick={() => navigate("/profile")}
+                      style={{ cursor: "pointer" }}
+                    >
                       <img
                         src={userInfo.avatar}
                         alt="User Avatar"

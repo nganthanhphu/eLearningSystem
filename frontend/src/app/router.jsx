@@ -95,6 +95,18 @@ export default function AppRouter() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/profile/me"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.STUDENT, ROLES.TEACHER]}>
+            <ProfileBase />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<Navigate to="edit" replace />} />
+        <Route path="edit" element={<ProfileEdit />} />
+        <Route path="security" element={<ProfileSecurity />} />
+      </Route>
     </Routes>
   );
 }
