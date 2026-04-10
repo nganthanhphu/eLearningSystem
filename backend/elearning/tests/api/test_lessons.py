@@ -44,3 +44,13 @@ class LessonAPITestCase(BaseAPITestCase):
         res = self.client.get(url)
 
         self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_get_assignments_other_teacher_forbidden(self):
+        course = self.create_course(teacher=self.teacher)
+        lesson = self.create_lesson(course=course)
+        self.create_assignment(lesson=lesson)
+        other_teacher = self.create_teacher()
+        url = reverse("lesson-get-assignments", args=[lesson.id])
+        self.auth(other_teacher)
+        res = self.client.get(url)
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)

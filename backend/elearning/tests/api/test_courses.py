@@ -59,7 +59,6 @@ class CourseAPITestCase(BaseAPITestCase):
         self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
 
 
-
     def test_student_not_enroll_course_get_lessons_forbidden(self):
         course=self.create_course()
         self.create_lesson(course=course)
@@ -70,3 +69,21 @@ class CourseAPITestCase(BaseAPITestCase):
 
         self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
 
+    def test_teacher_get_lessons_success(self):
+        course = self.create_course()
+        self.create_lesson(course=course)
+        self.auth(self.teacher)
+        url = reverse("course-get-lessons", args=[course.id])
+        res = self.client.get(url)
+
+        self.assertEqual(res.status_code,status.HTTP_200_OK)
+
+    def test_other_teacher_get_lessons_forbidden(self):
+        course = self.create_course()
+        self.create_lesson(course=course)
+        other_teacher=self.create_teacher()
+        self.auth(other_teacher)
+        url = reverse("course-get-lessons", args=[course.id])
+        res = self.client.get(url)
+
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)

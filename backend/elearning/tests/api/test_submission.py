@@ -70,3 +70,30 @@ class SubmissionAPITestCase(BaseAPITestCase):
         res = self.client.get(url)
 
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_teacher_get_course_submission_success(self):
+        course = self.create_course(teacher=self.teacher)
+        lesson = self.create_lesson(course=course)
+        assignment = self.create_assignment(lesson=lesson)
+
+        self.create_submission(assignment=assignment)
+
+        self.auth(self.teacher)
+        url = reverse("submission-list")
+        res = self.client.get(url)
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(res.data["results"]), 1)
+
+    def test_other_teacher_get_course_submission_forbidden(self):
+        course = self.create_course(teacher=self.teacher)
+        lesson = self.create_lesson(course=course)
+        assignment = self.create_assignment(lesson=lesson)
+
+        self.create_submission(assignment=assignment)
+        other_teacher=self.create_teacher()
+        self.auth(other_teacher)
+        url = reverse("submission-list")
+        res = self.client.get(url)
+
+        self.assertEqual(len(res.data["results"]), 0)
