@@ -79,3 +79,20 @@ class IsCourseTeacherForAssignment(IsAuthenticated):
 class IsCourseTeacherForSubmission(IsAuthenticated):
     def has_object_permission(self, request, view, submission):
         return Course.objects.filter(teacher=request.user, lessons__assignments__submissions__id=submission.id).exists()
+
+class IsCourseTeacherForCourseContent(IsTeacher):
+    def has_permission(self, request, view):
+        if not super().has_permission(request, view):
+            return False
+
+        course_id = view.kwargs.get('pk')
+        return Course.objects.filter(teacher=request.user, id=course_id).exists()   
+    
+class IsCourseTeacherForLessonContent(IsTeacher):
+    def has_permission(self, request, view):
+        if not super().has_permission(request, view):
+            return False
+
+        lesson_id = view.kwargs.get('pk')
+        return Course.objects.filter(teacher=request.user, lessons__id=lesson_id).exists()
+    
