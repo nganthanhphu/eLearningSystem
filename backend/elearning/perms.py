@@ -13,10 +13,6 @@ class IsStudent(IsAuthenticated):
         return super().has_permission(request, view) and request.user.role == UserRole.STUDENT
 
 
-def _is_enrolled(student, course):
-    return Enrollment.objects.filter(student=student, course=course).exists()
-
-
 class IsSubmissionOwner(IsAuthenticated):
     def has_object_permission(self, request, view, submission):
         return super().has_object_permission(request, view, submission) and submission.student == request.user
@@ -28,22 +24,25 @@ class IsCourseTeacher(IsAuthenticated):
 
 
 class IsEnrolledStudentForCourseContent(IsStudent):
-    def has_object_permission(self, request, view, course):
-        return super().has_permission(request, view) and _is_enrolled(request.user, course)
+    def has_permission(self, request, view):
+        if not super().has_permission(request, view):
+            return False
+
+        course_id = view.kwargs.get('pk')
+        return Enrollment.objects.filter(student=request.user, course_id=course_id).exists()
 
 
-class IsEnrolledStudentForLesson(IsStudent):
+class IsEnrolledStudentForLesson(IsAuthenticated):
     def has_object_permission(self, request, view, lesson):
-        return super().has_object_permission(request, view, lesson) and _is_enrolled(request.user, lesson.course)
+        return Enrollment.objects.filter(student=request.user, course__lessons__id=lesson.id).exists()
 
 
-class IsEnrolledStudentForAssignment(IsStudent):
+class IsEnrolledStudentForAssignment(IsAuthenticated):
     def has_object_permission(self, request, view, assignment):
-        return super().has_object_permission(request, view, assignment) and _is_enrolled(request.user,
-                                                                                         assignment.lesson.course)
+        return Enrollment.objects.filter(student=request.user, course__lessons__assignments__id=assignment.id).exists()
 
 
-class IsEnrolledStudentForAssignmentSubmission(IsStudent):
+class IsEnrolledStudentForAssignmentSubmission(IsAuthenticated):
     def has_permission(self, request, view):
         if not super().has_permission(request, view):
             return False
@@ -52,11 +51,7 @@ class IsEnrolledStudentForAssignmentSubmission(IsStudent):
             assignment_id = request.data.get('assignment')
             if not assignment_id:
                 return False
-            try:
-                assignment = Assignment.objects.select_related('lesson__course').get(id=assignment_id)
-                return _is_enrolled(request.user, assignment.lesson.course)
-            except Assignment.DoesNotExist:
-                return False
+            return Enrollment.objects.filter(student=request.user, course__lessons__assignments__id=assignment_id).exists()
 
         return True
 
@@ -73,14 +68,14 @@ class IsEnrolledStudentForLessonContent(IsStudent):
         ).exists()
 
 
-class IsCourseTeacherForLesson(IsCourseTeacher):
+class IsCourseTeacherForLesson(IsAuthenticated):
     def has_object_permission(self, request, view, lesson):
-        return super().has_object_permission(request, view, lesson.course)
+        return Course.objects.filter(teacher=request.user, lessons__id=lesson.id).exists()
 
-class IsCourseTeacherForAssignment(IsCourseTeacher):
+class IsCourseTeacherForAssignment(IsAuthenticated):
     def has_object_permission(self, request, view, assignment):
-        return super().has_object_permission(request, view, assignment.lesson.course)
+        return Course.objects.filter(teacher=request.user, lessons__assignments__id=assignment.id).exists()
 
-class IsCourseTeacherForSubmission(IsCourseTeacher):
+class IsCourseTeacherForSubmission(IsAuthenticated):
     def has_object_permission(self, request, view, submission):
-        return super().has_object_permission(request, view, submission.assignment.lesson.course)
+        return Course.objects.filter(teacher=request.user, lessons__assignments__submissions__id=submission.id).exists()

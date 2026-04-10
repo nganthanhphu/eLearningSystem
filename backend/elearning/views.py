@@ -90,7 +90,7 @@ class CourseViewSet(ModelViewSet):
 
 class LessonViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
                     mixins.DestroyModelMixin):
-    queryset = Lesson.objects.select_related('course').order_by('-created_at')
+    queryset = Lesson.objects.order_by('-created_at')
     pagination_class = ItemPaginator
     permission_classes = [perms.IsCourseTeacherForLesson]
     serializer_class = LessonSerializer
@@ -130,7 +130,7 @@ class LessonViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.RetrieveMode
 
 class AssignmentViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
                         mixins.DestroyModelMixin):
-    queryset = Assignment.objects.select_related('lesson__course')
+    queryset = Assignment.objects.order_by('-id')
     pagination_class = ItemPaginator
     permission_classes = [perms.IsCourseTeacherForAssignment]
     serializer_class = AssignmentSerializer
@@ -172,7 +172,7 @@ class EnrollmentViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.ListMode
 
 class SubmissionViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.ListModelMixin, mixins.UpdateModelMixin,
                         mixins.RetrieveModelMixin):
-    queryset = Submission.objects.select_related('assignment', 'student', 'assignment__lesson__course').order_by(
+    queryset = Submission.objects.select_related('assignment', 'student').order_by(
         '-submitted_at')
     pagination_class = ItemPaginator
     http_method_names = ['get', 'post', 'patch']
