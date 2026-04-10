@@ -14,6 +14,10 @@ import TAssignments from "../pages/teacher/Assignments";
 import TSubmission from "../pages/teacher/TSubmission";
 import TSubmissionDetail from "../pages/teacher/TSubmissionDetail";
 import SAllSubmission from "../pages/student/SAllSubmission";
+import ProfileBase from "../pages/profiles/ProfileBase";
+import ProfileEdit from "../pages/profiles/ProfileEdit";
+import ProfileSecurity from "../pages/profiles/ProfileSecurity";
+import { Navigate } from "react-router-dom";
 
 export default function AppRouter() {
   return (
