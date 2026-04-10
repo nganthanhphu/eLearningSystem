@@ -61,9 +61,16 @@ class IsEnrolledStudentForAssignmentSubmission(IsStudent):
         return True
 
 
-class IsEnrolledStudentForLessonContent(IsAuthenticated):
-    def has_object_permission(self, request, view, lesson):
-        return super().has_object_permission(request,view,lesson) and _is_enrolled(request.user, lesson.course)
+class IsEnrolledStudentForLessonContent(IsStudent):
+    def has_permission(self, request, view):
+        if not super().has_permission(request, view):
+            return False
+
+        lesson_id = view.kwargs.get('pk')
+        return Enrollment.objects.filter(
+            student=request.user,
+            course__lessons__id=lesson_id
+        ).exists()
 
 
 class IsCourseTeacherForLesson(IsCourseTeacher):
