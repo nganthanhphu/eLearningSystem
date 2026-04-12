@@ -49,7 +49,7 @@ export default function TSubmission() {
                   className="text-muted mb-0"
                   style={{ whiteSpace: "pre-line", fontSize: "0.95em" }}
                 >
-                  Bài làm của :{submission?.student?.last_name}{" "}
+                  Bài làm của {submission?.student?.last_name}{" "}
                   {submission?.student?.first_name} - Nộp vào{" "}
                   {new Date(submission?.submitted_at).toLocaleString()}
                 </p>

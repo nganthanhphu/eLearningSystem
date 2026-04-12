@@ -9,20 +9,23 @@ export const useAssignments = (lessonId) => {
   const [next, setNext] = useState(null);
   const [previous, setPrevious] = useState(null);
 
-  const fetchAssignments = useCallback(async (url) => {
-    setLoading(true);
-    try {
-      const response = await authApis(cookies.access_token).get(url);
-      const data = response?.data || {};
-      setAssignments(data?.results || []);
-      setNext(data?.next || null);
-      setPrevious(data?.previous || null);
-    } catch (error) {
-      console.error("Fetch error:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [cookies.access_token]);
+  const fetchAssignments = useCallback(
+    async (url) => {
+      setLoading(true);
+      try {
+        const response = await authApis(cookies.access_token).get(url);
+        const data = response?.data || {};
+        setAssignments(data?.results || []);
+        setNext(data?.next || null);
+        setPrevious(data?.previous || null);
+      } catch (error) {
+        console.error("Fetch error:", error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [cookies.access_token],
+  );
 
   useEffect(() => {
     if (lessonId) {
@@ -38,5 +41,13 @@ export const useAssignments = (lessonId) => {
     if (previous) fetchAssignments(previous);
   };
 
-  return { assignments, loading, next, previous, goToNextPage, goToPreviousPage };
+  return {
+    assignments,
+    loading,
+    next,
+    previous,
+    goToNextPage,
+    goToPreviousPage,
+    fetchAssignments,
+  };
 };

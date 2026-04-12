@@ -100,7 +100,7 @@ export default function Header() {
                   {userInfo && (
                     <li
                       className="nav-item d-flex align-items-center gap-2"
-                      onClick={() => navigate("/profile")}
+                      onClick={() => navigate("/profile/me")}
                       style={{ cursor: "pointer" }}
                     >
                       <img
