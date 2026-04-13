@@ -141,13 +141,15 @@ export default function Course() {
                 </h5>
                 <p className="card-text text-muted">{course?.description}</p>
                 <div className="d-flex align-items-center gap-2">
-                  <button
-                    type="button"
-                    className="btn btn-primary"
-                    onClick={() => handleEnroll(course.id)}
-                  >
-                    Đăng ký
-                  </button>
+                  {(getCurrentUserRole() === ROLES.STUDENT || !cookies.access_token) && (
+                    <button
+                      type="button"
+                      className="btn btn-primary"
+                      onClick={() => handleEnroll(course.id)}
+                    >
+                      Đăng ký
+                    </button>
+                  )}
                 </div>
                 <hr />
                 <h6 className="mb-0 fw-bold mb-2">Giáo viên phụ trách:</h6>
