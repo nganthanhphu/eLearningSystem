@@ -67,7 +67,7 @@ class CourseViewSet(ModelViewSet):
         if self.action in ['list']:
             return [permissions.AllowAny()]
         elif self.action in ['get_lessons']:
-            return [(perms.IsEnrolledStudentForCourseContent | perms.IsTeacher)()]
+            return [(perms.IsEnrolledStudentForCourseContent | perms.IsCourseTeacherForCourseContent)()]
         elif self.action in ['update', 'partial_update', 'destroy']:
             return [perms.IsCourseTeacher()]
         return super().get_permissions()
@@ -80,7 +80,7 @@ class CourseViewSet(ModelViewSet):
         instance.save()
 
     @action(methods=['get'], detail=True, url_path='lessons',
-            permission_classes=[perms.IsEnrolledStudentForCourseContent | perms.IsTeacher])
+            permission_classes=[perms.IsEnrolledStudentForCourseContent | perms.IsCourseTeacherForCourseContent])
     def get_lessons(self, request, pk=None):
         lessons = Lesson.objects.filter(course_id=pk).select_related('course').order_by('created_at')
         paginated_lessons = self.paginate_queryset(lessons)
@@ -90,7 +90,7 @@ class CourseViewSet(ModelViewSet):
 
 class LessonViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
                     mixins.DestroyModelMixin):
-    queryset = Lesson.objects.select_related('course').order_by('-created_at')
+    queryset = Lesson.objects.order_by('-created_at')
     pagination_class = ItemPaginator
     permission_classes = [perms.IsCourseTeacherForLesson]
     serializer_class = LessonSerializer
@@ -107,7 +107,7 @@ class LessonViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.RetrieveMode
         if self.action in ['retrieve']:
             return [(perms.IsEnrolledStudentForLesson | perms.IsTeacher)()]
         elif self.action in ['get_assignments']:
-            return [(perms.IsTeacher | (perms.IsEnrolledStudentForLessonContent & perms.IsStudent))()]
+            return [(perms.IsCourseTeacherForLessonContent | perms.IsEnrolledStudentForLessonContent)()]
         return super().get_permissions()
 
     @swagger_auto_schema(
@@ -119,7 +119,7 @@ class LessonViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.RetrieveMode
         methods=['get'],
         detail=True,
         url_path='assignments',
-        permission_classes=[perms.IsTeacher | (perms.IsEnrolledStudentForLessonContent & perms.IsStudent)],
+        permission_classes=[perms.IsCourseTeacherForLessonContent | perms.IsEnrolledStudentForLessonContent],
     )
     def get_assignments(self, request, pk=None):
         assignments = Assignment.objects.filter(lesson_id=pk).order_by('id')
@@ -130,7 +130,7 @@ class LessonViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.RetrieveMode
 
 class AssignmentViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
                         mixins.DestroyModelMixin):
-    queryset = Assignment.objects.select_related('lesson__course')
+    queryset = Assignment.objects.order_by('-id')
     pagination_class = ItemPaginator
     permission_classes = [perms.IsCourseTeacherForAssignment]
     serializer_class = AssignmentSerializer
@@ -172,7 +172,7 @@ class EnrollmentViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.ListMode
 
 class SubmissionViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.ListModelMixin, mixins.UpdateModelMixin,
                         mixins.RetrieveModelMixin):
-    queryset = Submission.objects.select_related('assignment', 'student', 'assignment__lesson__course').order_by(
+    queryset = Submission.objects.select_related('assignment', 'student').order_by(
         '-submitted_at')
     pagination_class = ItemPaginator
     http_method_names = ['get', 'post', 'patch']
