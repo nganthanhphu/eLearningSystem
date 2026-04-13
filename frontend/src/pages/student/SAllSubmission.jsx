@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useSubmissions } from "../../hooks/useSubmission";
 import { useNavigate } from "react-router-dom";
 import PaginationControls from "../../components/PaginationControls";
