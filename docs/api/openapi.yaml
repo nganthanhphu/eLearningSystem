@@ -1,1226 +1,863 @@
-{
-  "swagger": "2.0",
-  "info": {
-    "title": "ELearning API System",
-    "description": "APIs for eLearning App",
-    "contact": {
-      "email": "nhocjoon123@gmail.com"
-    },
-    "license": {
-      "name": "@2026"
-    },
-    "version": "v1"
-  },
-  "host": "127.0.0.1:8000",
-  "schemes": [
-    "http"
-  ],
-  "basePath": "/",
-  "consumes": [
-    "application/json"
-  ],
-  "produces": [
-    "application/json"
-  ],
-  "securityDefinitions": {
-    "Basic": {
-      "type": "basic"
-    }
-  },
-  "security": [
-    {
-      "Basic": []
-    }
-  ],
-  "paths": {
-    "/assignments/": {
-      "post": {
-        "operationId": "assignments_create",
-        "description": "",
-        "parameters": [
-          {
-            "name": "data",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/Assignment"
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/Assignment"
-            }
-          }
-        },
-        "tags": [
-          "assignments"
-        ]
-      },
-      "parameters": []
-    },
-    "/assignments/{id}/": {
-      "get": {
-        "operationId": "assignments_read",
-        "description": "",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/Assignment"
-            }
-          }
-        },
-        "tags": [
-          "assignments"
-        ]
-      },
-      "patch": {
-        "operationId": "assignments_partial_update",
-        "description": "",
-        "parameters": [
-          {
-            "name": "data",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/Assignment"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/Assignment"
-            }
-          }
-        },
-        "tags": [
-          "assignments"
-        ]
-      },
-      "delete": {
-        "operationId": "assignments_delete",
-        "description": "",
-        "parameters": [],
-        "responses": {
-          "204": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "assignments"
-        ]
-      },
-      "parameters": [
-        {
-          "name": "id",
-          "in": "path",
-          "description": "A unique integer value identifying this assignment.",
-          "required": true,
-          "type": "integer"
-        }
-      ]
-    },
-    "/assignments/{id}/submissions/": {
-      "get": {
-        "operationId": "assignments_get_submission",
-        "summary": "Get submission for an assignment",
-        "description": "",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "SubmissionSerializer()"
-          }
-        },
-        "tags": [
-          "assignments"
-        ]
-      },
-      "parameters": [
-        {
-          "name": "id",
-          "in": "path",
-          "description": "A unique integer value identifying this assignment.",
-          "required": true,
-          "type": "integer"
-        }
-      ]
-    },
-    "/certificates/": {
-      "get": {
-        "operationId": "certificates_list",
-        "description": "",
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "description": "A page number within the paginated result set.",
-            "required": false,
-            "type": "integer"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "required": [
-                "count",
-                "results"
-              ],
-              "type": "object",
-              "properties": {
-                "count": {
-                  "type": "integer"
-                },
-                "next": {
-                  "type": "string",
-                  "format": "uri",
-                  "x-nullable": true
-                },
-                "previous": {
-                  "type": "string",
-                  "format": "uri",
-                  "x-nullable": true
-                },
-                "results": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/definitions/Certificate"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "certificates"
-        ]
-      },
-      "parameters": []
-    },
-    "/certificates/{id}/": {
-      "get": {
-        "operationId": "certificates_read",
-        "description": "",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/Certificate"
-            }
-          }
-        },
-        "tags": [
-          "certificates"
-        ]
-      },
-      "parameters": [
-        {
-          "name": "id",
-          "in": "path",
-          "description": "A unique integer value identifying this certificate.",
-          "required": true,
-          "type": "integer"
-        }
-      ]
-    },
-    "/courses/": {
-      "get": {
-        "operationId": "courses_list",
-        "description": "",
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "description": "A page number within the paginated result set.",
-            "required": false,
-            "type": "integer"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "required": [
-                "count",
-                "results"
-              ],
-              "type": "object",
-              "properties": {
-                "count": {
-                  "type": "integer"
-                },
-                "next": {
-                  "type": "string",
-                  "format": "uri",
-                  "x-nullable": true
-                },
-                "previous": {
-                  "type": "string",
-                  "format": "uri",
-                  "x-nullable": true
-                },
-                "results": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/definitions/Course"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "courses"
-        ]
-      },
-      "post": {
-        "operationId": "courses_create",
-        "description": "",
-        "parameters": [
-          {
-            "name": "data",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/Course"
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/Course"
-            }
-          }
-        },
-        "tags": [
-          "courses"
-        ]
-      },
-      "parameters": []
-    },
-    "/courses/{id}/": {
-      "get": {
-        "operationId": "courses_read",
-        "description": "",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/Course"
-            }
-          }
-        },
-        "tags": [
-          "courses"
-        ]
-      },
-      "patch": {
-        "operationId": "courses_partial_update",
-        "description": "",
-        "parameters": [
-          {
-            "name": "data",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/Course"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/Course"
-            }
-          }
-        },
-        "tags": [
-          "courses"
-        ]
-      },
-      "delete": {
-        "operationId": "courses_delete",
-        "description": "",
-        "parameters": [],
-        "responses": {
-          "204": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "courses"
-        ]
-      },
-      "parameters": [
-        {
-          "name": "id",
-          "in": "path",
-          "description": "A unique integer value identifying this course.",
-          "required": true,
-          "type": "integer"
-        }
-      ]
-    },
-    "/courses/{id}/lessons/": {
-      "get": {
-        "operationId": "courses_get_lessons",
-        "description": "",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/Course"
-            }
-          }
-        },
-        "tags": [
-          "courses"
-        ]
-      },
-      "parameters": [
-        {
-          "name": "id",
-          "in": "path",
-          "description": "A unique integer value identifying this course.",
-          "required": true,
-          "type": "integer"
-        }
-      ]
-    },
-    "/enrollments/": {
-      "get": {
-        "operationId": "enrollments_list",
-        "description": "",
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "description": "A page number within the paginated result set.",
-            "required": false,
-            "type": "integer"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "required": [
-                "count",
-                "results"
-              ],
-              "type": "object",
-              "properties": {
-                "count": {
-                  "type": "integer"
-                },
-                "next": {
-                  "type": "string",
-                  "format": "uri",
-                  "x-nullable": true
-                },
-                "previous": {
-                  "type": "string",
-                  "format": "uri",
-                  "x-nullable": true
-                },
-                "results": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/definitions/Enrollment"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "enrollments"
-        ]
-      },
-      "post": {
-        "operationId": "enrollments_create",
-        "description": "",
-        "parameters": [
-          {
-            "name": "data",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/Enrollment"
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/Enrollment"
-            }
-          }
-        },
-        "tags": [
-          "enrollments"
-        ]
-      },
-      "parameters": []
-    },
-    "/lessons/": {
-      "post": {
-        "operationId": "lessons_create",
-        "description": "",
-        "parameters": [
-          {
-            "name": "data",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/Lesson"
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/Lesson"
-            }
-          }
-        },
-        "tags": [
-          "lessons"
-        ]
-      },
-      "parameters": []
-    },
-    "/lessons/{id}/": {
-      "get": {
-        "operationId": "lessons_read",
-        "description": "",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/Lesson"
-            }
-          }
-        },
-        "tags": [
-          "lessons"
-        ]
-      },
-      "patch": {
-        "operationId": "lessons_partial_update",
-        "description": "",
-        "parameters": [
-          {
-            "name": "data",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/Lesson"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/Lesson"
-            }
-          }
-        },
-        "tags": [
-          "lessons"
-        ]
-      },
-      "delete": {
-        "operationId": "lessons_delete",
-        "description": "",
-        "parameters": [],
-        "responses": {
-          "204": {
-            "description": ""
-          }
-        },
-        "tags": [
-          "lessons"
-        ]
-      },
-      "parameters": [
-        {
-          "name": "id",
-          "in": "path",
-          "description": "A unique integer value identifying this lesson.",
-          "required": true,
-          "type": "integer"
-        }
-      ]
-    },
-    "/lessons/{id}/assignments/": {
-      "get": {
-        "operationId": "lessons_get_assignments",
-        "summary": "Get assignments for a lesson",
-        "description": "",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "AssignmentSerializer(many=True)"
-          }
-        },
-        "tags": [
-          "lessons"
-        ]
-      },
-      "parameters": [
-        {
-          "name": "id",
-          "in": "path",
-          "description": "A unique integer value identifying this lesson.",
-          "required": true,
-          "type": "integer"
-        }
-      ]
-    },
-    "/submissions/": {
-      "get": {
-        "operationId": "submissions_list",
-        "description": "",
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "description": "A page number within the paginated result set.",
-            "required": false,
-            "type": "integer"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "required": [
-                "count",
-                "results"
-              ],
-              "type": "object",
-              "properties": {
-                "count": {
-                  "type": "integer"
-                },
-                "next": {
-                  "type": "string",
-                  "format": "uri",
-                  "x-nullable": true
-                },
-                "previous": {
-                  "type": "string",
-                  "format": "uri",
-                  "x-nullable": true
-                },
-                "results": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/definitions/StudentSubmission"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "submissions"
-        ]
-      },
-      "post": {
-        "operationId": "submissions_create",
-        "description": "",
-        "parameters": [
-          {
-            "name": "data",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/StudentSubmission"
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/StudentSubmission"
-            }
-          }
-        },
-        "tags": [
-          "submissions"
-        ]
-      },
-      "parameters": []
-    },
-    "/submissions/{id}/": {
-      "get": {
-        "operationId": "submissions_read",
-        "description": "",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/StudentSubmission"
-            }
-          }
-        },
-        "tags": [
-          "submissions"
-        ]
-      },
-      "patch": {
-        "operationId": "submissions_partial_update",
-        "description": "",
-        "parameters": [
-          {
-            "name": "data",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/StudentSubmission"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/StudentSubmission"
-            }
-          }
-        },
-        "tags": [
-          "submissions"
-        ]
-      },
-      "parameters": [
-        {
-          "name": "id",
-          "in": "path",
-          "description": "A unique integer value identifying this submission.",
-          "required": true,
-          "type": "integer"
-        }
-      ]
-    },
-    "/users/": {
-      "post": {
-        "operationId": "users_create",
-        "description": "",
-        "parameters": [
-          {
-            "name": "username",
-            "in": "formData",
-            "description": "Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.",
-            "required": true,
-            "type": "string",
-            "pattern": "^[\\w.@+-]+$",
-            "maxLength": 150,
-            "minLength": 1
-          },
-          {
-            "name": "password",
-            "in": "formData",
-            "required": true,
-            "type": "string",
-            "maxLength": 128,
-            "minLength": 1
-          },
-          {
-            "name": "first_name",
-            "in": "formData",
-            "required": false,
-            "type": "string",
-            "maxLength": 150
-          },
-          {
-            "name": "last_name",
-            "in": "formData",
-            "required": false,
-            "type": "string",
-            "maxLength": 150
-          },
-          {
-            "name": "email",
-            "in": "formData",
-            "required": true,
-            "type": "string",
-            "format": "email",
-            "maxLength": 254,
-            "minLength": 1
-          },
-          {
-            "name": "avatar",
-            "in": "formData",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dob",
-            "in": "formData",
-            "required": false,
-            "type": "string",
-            "format": "date",
-            "x-nullable": true
-          },
-          {
-            "name": "old_password",
-            "in": "formData",
-            "required": false,
-            "type": "string",
-            "minLength": 1
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/User"
-            }
-          }
-        },
-        "consumes": [
-          "multipart/form-data"
-        ],
-        "tags": [
-          "users"
-        ]
-      },
-      "parameters": []
-    },
-    "/users/current-user/": {
-      "get": {
-        "operationId": "users_current-user_read",
-        "summary": "Get current user information",
-        "description": "",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "UserSerializer"
-          }
-        },
-        "consumes": [
-          "multipart/form-data"
-        ],
-        "tags": [
-          "users"
-        ]
-      },
-      "patch": {
-        "operationId": "users_current-user_partial_update",
-        "summary": "Update current user information",
-        "description": "",
-        "parameters": [
-          {
-            "name": "username",
-            "in": "formData",
-            "description": "Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.",
-            "required": true,
-            "type": "string",
-            "pattern": "^[\\w.@+-]+$",
-            "maxLength": 150,
-            "minLength": 1
-          },
-          {
-            "name": "password",
-            "in": "formData",
-            "required": true,
-            "type": "string",
-            "maxLength": 128,
-            "minLength": 1
-          },
-          {
-            "name": "first_name",
-            "in": "formData",
-            "required": false,
-            "type": "string",
-            "maxLength": 150
-          },
-          {
-            "name": "last_name",
-            "in": "formData",
-            "required": false,
-            "type": "string",
-            "maxLength": 150
-          },
-          {
-            "name": "email",
-            "in": "formData",
-            "required": true,
-            "type": "string",
-            "format": "email",
-            "maxLength": 254,
-            "minLength": 1
-          },
-          {
-            "name": "avatar",
-            "in": "formData",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dob",
-            "in": "formData",
-            "required": false,
-            "type": "string",
-            "format": "date",
-            "x-nullable": true
-          },
-          {
-            "name": "old_password",
-            "in": "formData",
-            "required": false,
-            "type": "string",
-            "minLength": 1
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "UserSerializer"
-          }
-        },
-        "consumes": [
-          "multipart/form-data"
-        ],
-        "tags": [
-          "users"
-        ]
-      },
-      "parameters": []
-    },
-    "/users/{id}/": {
-      "get": {
-        "operationId": "users_read",
-        "description": "",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/User"
-            }
-          }
-        },
-        "consumes": [
-          "multipart/form-data"
-        ],
-        "tags": [
-          "users"
-        ]
-      },
-      "parameters": [
-        {
-          "name": "id",
-          "in": "path",
-          "description": "A unique integer value identifying this user.",
-          "required": true,
-          "type": "integer"
-        }
-      ]
-    }
-  },
-  "definitions": {
-    "Assignment": {
-      "required": [
-        "title",
-        "content",
-        "lesson"
-      ],
-      "type": "object",
-      "properties": {
-        "id": {
-          "title": "ID",
-          "type": "integer",
-          "readOnly": true
-        },
-        "title": {
-          "title": "Title",
-          "type": "string",
-          "maxLength": 255,
-          "minLength": 1
-        },
-        "content": {
-          "title": "Content",
-          "type": "string",
-          "minLength": 1
-        },
-        "lesson": {
-          "title": "Lesson",
-          "type": "integer"
-        }
-      }
-    },
-    "Certificate": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "title": "ID",
-          "type": "integer",
-          "readOnly": true
-        },
-        "enrollment": {
-          "title": "Enrollment",
-          "type": "integer",
-          "readOnly": true
-        },
-        "issued_at": {
-          "title": "Issued at",
-          "type": "string",
-          "format": "date-time",
-          "readOnly": true
-        },
-        "first_name": {
-          "title": "First name",
-          "type": "string",
-          "readOnly": true
-        },
-        "last_name": {
-          "title": "Last name",
-          "type": "string",
-          "readOnly": true
-        },
-        "course": {
-          "title": "Course",
-          "type": "string",
-          "readOnly": true
-        }
-      }
-    },
-    "Course": {
-      "required": [
-        "title",
-        "description"
-      ],
-      "type": "object",
-      "properties": {
-        "id": {
-          "title": "ID",
-          "type": "integer",
-          "readOnly": true
-        },
-        "title": {
-          "title": "Title",
-          "type": "string",
-          "maxLength": 255,
-          "minLength": 1
-        },
-        "description": {
-          "title": "Description",
-          "type": "string",
-          "minLength": 1
-        },
-        "teacher": {
-          "title": "Teacher",
-          "type": "integer",
-          "readOnly": true,
-          "x-nullable": true
-        },
-        "created_at": {
-          "title": "Created at",
-          "type": "string",
-          "format": "date-time",
-          "readOnly": true
-        }
-      }
-    },
-    "Enrollment": {
-      "required": [
-        "course"
-      ],
-      "type": "object",
-      "properties": {
-        "id": {
-          "title": "ID",
-          "type": "integer",
-          "readOnly": true
-        },
-        "course": {
-          "title": "Course",
-          "type": "integer"
-        },
-        "enrolled_at": {
-          "title": "Enrolled at",
-          "type": "string",
-          "format": "date-time",
-          "readOnly": true
-        },
-        "progress": {
-          "title": "Progress",
-          "type": "number"
-        }
-      }
-    },
-    "Lesson": {
-      "required": [
-        "title",
-        "content",
-        "course"
-      ],
-      "type": "object",
-      "properties": {
-        "id": {
-          "title": "ID",
-          "type": "integer",
-          "readOnly": true
-        },
-        "title": {
-          "title": "Title",
-          "type": "string",
-          "maxLength": 255,
-          "minLength": 1
-        },
-        "content": {
-          "title": "Content",
-          "type": "string",
-          "minLength": 1
-        },
-        "course": {
-          "title": "Course",
-          "type": "integer"
-        },
-        "created_at": {
-          "title": "Created at",
-          "type": "string",
-          "format": "date-time",
-          "readOnly": true
-        },
-        "video_url": {
-          "title": "Video url",
-          "type": "string",
-          "format": "uri",
-          "maxLength": 200,
-          "x-nullable": true
-        }
-      }
-    },
-    "StudentSubmission": {
-      "required": [
-        "assignment",
-        "content"
-      ],
-      "type": "object",
-      "properties": {
-        "id": {
-          "title": "ID",
-          "type": "integer",
-          "readOnly": true
-        },
-        "assignment": {
-          "title": "Assignment",
-          "type": "integer"
-        },
-        "content": {
-          "title": "Content",
-          "type": "string",
-          "minLength": 1
-        },
-        "submitted_at": {
-          "title": "Submitted at",
-          "type": "string",
-          "format": "date-time",
-          "readOnly": true
-        },
-        "grade": {
-          "title": "Grade",
-          "type": "number",
-          "readOnly": true,
-          "x-nullable": true
-        },
-        "comment": {
-          "title": "Comment",
-          "type": "string",
-          "readOnly": true,
-          "minLength": 1,
-          "x-nullable": true
-        }
-      }
-    },
-    "User": {
-      "required": [
-        "username",
-        "password",
-        "email",
-        "avatar"
-      ],
-      "type": "object",
-      "properties": {
-        "username": {
-          "title": "Username",
-          "description": "Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.",
-          "type": "string",
-          "pattern": "^[\\w.@+-]+$",
-          "maxLength": 150,
-          "minLength": 1
-        },
-        "password": {
-          "title": "Password",
-          "type": "string",
-          "maxLength": 128,
-          "minLength": 1
-        },
-        "first_name": {
-          "title": "First name",
-          "type": "string",
-          "maxLength": 150
-        },
-        "last_name": {
-          "title": "Last name",
-          "type": "string",
-          "maxLength": 150
-        },
-        "email": {
-          "title": "Email",
-          "type": "string",
-          "format": "email",
-          "maxLength": 254,
-          "minLength": 1
-        },
-        "role": {
-          "title": "Role",
-          "type": "string",
-          "enum": [
-            "STUDENT",
-            "TEACHER",
-            "ADMIN"
-          ],
-          "readOnly": true
-        },
-        "avatar": {
-          "title": "Avatar",
-          "type": "string"
-        },
-        "dob": {
-          "title": "Dob",
-          "type": "string",
-          "format": "date",
-          "x-nullable": true
-        },
-        "old_password": {
-          "title": "Old password",
-          "type": "string",
-          "minLength": 1
-        }
-      }
-    }
-  }
-}
+swagger: '2.0'
+info:
+  title: ELearning API System
+  description: APIs for eLearning App
+  contact:
+    email: nhocjoon123@gmail.com
+  license:
+    name: '@2026'
+  version: v1
+host: 127.0.0.1:8000
+schemes:
+  - http
+basePath: /
+consumes:
+  - application/json
+produces:
+  - application/json
+securityDefinitions:
+  Basic:
+    type: basic
+security:
+  - Basic: []
+paths:
+  /assignments/:
+    post:
+      operationId: assignments_create
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Assignment'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/Assignment'
+      tags:
+        - assignments
+    parameters: []
+  /assignments/{id}/:
+    get:
+      operationId: assignments_read
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Assignment'
+      tags:
+        - assignments
+    patch:
+      operationId: assignments_partial_update
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Assignment'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Assignment'
+      tags:
+        - assignments
+    delete:
+      operationId: assignments_delete
+      description: ''
+      parameters: []
+      responses:
+        '204':
+          description: ''
+      tags:
+        - assignments
+    parameters:
+      - name: id
+        in: path
+        description: A unique integer value identifying this assignment.
+        required: true
+        type: integer
+  /assignments/{id}/submissions/:
+    get:
+      operationId: assignments_get_submission
+      summary: Get submission for an assignment
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: SubmissionSerializer()
+      tags:
+        - assignments
+    parameters:
+      - name: id
+        in: path
+        description: A unique integer value identifying this assignment.
+        required: true
+        type: integer
+  /certificates/:
+    get:
+      operationId: certificates_list
+      description: ''
+      parameters:
+        - name: page
+          in: query
+          description: A page number within the paginated result set.
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+              - count
+              - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+                x-nullable: true
+              previous:
+                type: string
+                format: uri
+                x-nullable: true
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/Certificate'
+      tags:
+        - certificates
+    parameters: []
+  /certificates/{id}/:
+    get:
+      operationId: certificates_read
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Certificate'
+      tags:
+        - certificates
+    parameters:
+      - name: id
+        in: path
+        description: A unique integer value identifying this certificate.
+        required: true
+        type: integer
+  /courses/:
+    get:
+      operationId: courses_list
+      description: ''
+      parameters:
+        - name: page
+          in: query
+          description: A page number within the paginated result set.
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+              - count
+              - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+                x-nullable: true
+              previous:
+                type: string
+                format: uri
+                x-nullable: true
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/Course'
+      tags:
+        - courses
+    post:
+      operationId: courses_create
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Course'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/Course'
+      tags:
+        - courses
+    parameters: []
+  /courses/{id}/:
+    get:
+      operationId: courses_read
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Course'
+      tags:
+        - courses
+    patch:
+      operationId: courses_partial_update
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Course'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Course'
+      tags:
+        - courses
+    delete:
+      operationId: courses_delete
+      description: ''
+      parameters: []
+      responses:
+        '204':
+          description: ''
+      tags:
+        - courses
+    parameters:
+      - name: id
+        in: path
+        description: A unique integer value identifying this course.
+        required: true
+        type: integer
+  /courses/{id}/lessons/:
+    get:
+      operationId: courses_get_lessons
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Course'
+      tags:
+        - courses
+    parameters:
+      - name: id
+        in: path
+        description: A unique integer value identifying this course.
+        required: true
+        type: integer
+  /enrollments/:
+    get:
+      operationId: enrollments_list
+      description: ''
+      parameters:
+        - name: page
+          in: query
+          description: A page number within the paginated result set.
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+              - count
+              - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+                x-nullable: true
+              previous:
+                type: string
+                format: uri
+                x-nullable: true
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/Enrollment'
+      tags:
+        - enrollments
+    post:
+      operationId: enrollments_create
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Enrollment'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/Enrollment'
+      tags:
+        - enrollments
+    parameters: []
+  /lessons/:
+    post:
+      operationId: lessons_create
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Lesson'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/Lesson'
+      tags:
+        - lessons
+    parameters: []
+  /lessons/{id}/:
+    get:
+      operationId: lessons_read
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Lesson'
+      tags:
+        - lessons
+    patch:
+      operationId: lessons_partial_update
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Lesson'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Lesson'
+      tags:
+        - lessons
+    delete:
+      operationId: lessons_delete
+      description: ''
+      parameters: []
+      responses:
+        '204':
+          description: ''
+      tags:
+        - lessons
+    parameters:
+      - name: id
+        in: path
+        description: A unique integer value identifying this lesson.
+        required: true
+        type: integer
+  /lessons/{id}/assignments/:
+    get:
+      operationId: lessons_get_assignments
+      summary: Get assignments for a lesson
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: AssignmentSerializer(many=True)
+      tags:
+        - lessons
+    parameters:
+      - name: id
+        in: path
+        description: A unique integer value identifying this lesson.
+        required: true
+        type: integer
+  /submissions/:
+    get:
+      operationId: submissions_list
+      description: ''
+      parameters:
+        - name: page
+          in: query
+          description: A page number within the paginated result set.
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+              - count
+              - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+                x-nullable: true
+              previous:
+                type: string
+                format: uri
+                x-nullable: true
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/StudentSubmission'
+      tags:
+        - submissions
+    post:
+      operationId: submissions_create
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/StudentSubmission'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/StudentSubmission'
+      tags:
+        - submissions
+    parameters: []
+  /submissions/{id}/:
+    get:
+      operationId: submissions_read
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/StudentSubmission'
+      tags:
+        - submissions
+    patch:
+      operationId: submissions_partial_update
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/StudentSubmission'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/StudentSubmission'
+      tags:
+        - submissions
+    parameters:
+      - name: id
+        in: path
+        description: A unique integer value identifying this submission.
+        required: true
+        type: integer
+  /users/:
+    post:
+      operationId: users_create
+      description: ''
+      parameters:
+        - name: username
+          in: formData
+          description: >-
+            Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          required: true
+          type: string
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+          minLength: 1
+        - name: password
+          in: formData
+          required: true
+          type: string
+          maxLength: 128
+          minLength: 1
+        - name: first_name
+          in: formData
+          required: false
+          type: string
+          maxLength: 150
+        - name: last_name
+          in: formData
+          required: false
+          type: string
+          maxLength: 150
+        - name: email
+          in: formData
+          required: true
+          type: string
+          format: email
+          maxLength: 254
+          minLength: 1
+        - name: avatar
+          in: formData
+          required: true
+          type: string
+        - name: dob
+          in: formData
+          required: false
+          type: string
+          format: date
+          x-nullable: true
+        - name: old_password
+          in: formData
+          required: false
+          type: string
+          minLength: 1
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/User'
+      consumes:
+        - multipart/form-data
+      tags:
+        - users
+    parameters: []
+  /users/current-user/:
+    get:
+      operationId: users_current-user_read
+      summary: Get current user information
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: UserSerializer
+      consumes:
+        - multipart/form-data
+      tags:
+        - users
+    patch:
+      operationId: users_current-user_partial_update
+      summary: Update current user information
+      description: ''
+      parameters:
+        - name: username
+          in: formData
+          description: >-
+            Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          required: true
+          type: string
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+          minLength: 1
+        - name: password
+          in: formData
+          required: true
+          type: string
+          maxLength: 128
+          minLength: 1
+        - name: first_name
+          in: formData
+          required: false
+          type: string
+          maxLength: 150
+        - name: last_name
+          in: formData
+          required: false
+          type: string
+          maxLength: 150
+        - name: email
+          in: formData
+          required: true
+          type: string
+          format: email
+          maxLength: 254
+          minLength: 1
+        - name: avatar
+          in: formData
+          required: true
+          type: string
+        - name: dob
+          in: formData
+          required: false
+          type: string
+          format: date
+          x-nullable: true
+        - name: old_password
+          in: formData
+          required: false
+          type: string
+          minLength: 1
+      responses:
+        '200':
+          description: UserSerializer
+      consumes:
+        - multipart/form-data
+      tags:
+        - users
+    parameters: []
+  /users/{id}/:
+    get:
+      operationId: users_read
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/User'
+      consumes:
+        - multipart/form-data
+      tags:
+        - users
+    parameters:
+      - name: id
+        in: path
+        description: A unique integer value identifying this user.
+        required: true
+        type: integer
+definitions:
+  Assignment:
+    required:
+      - title
+      - content
+      - lesson
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      title:
+        title: Title
+        type: string
+        maxLength: 255
+        minLength: 1
+      content:
+        title: Content
+        type: string
+        minLength: 1
+      lesson:
+        title: Lesson
+        type: integer
+  Certificate:
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      enrollment:
+        title: Enrollment
+        type: integer
+        readOnly: true
+      issued_at:
+        title: Issued at
+        type: string
+        format: date-time
+        readOnly: true
+      first_name:
+        title: First name
+        type: string
+        readOnly: true
+      last_name:
+        title: Last name
+        type: string
+        readOnly: true
+      course:
+        title: Course
+        type: string
+        readOnly: true
+  Course:
+    required:
+      - title
+      - description
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      title:
+        title: Title
+        type: string
+        maxLength: 255
+        minLength: 1
+      description:
+        title: Description
+        type: string
+        minLength: 1
+      teacher:
+        title: Teacher
+        type: integer
+        readOnly: true
+        x-nullable: true
+      created_at:
+        title: Created at
+        type: string
+        format: date-time
+        readOnly: true
+  Enrollment:
+    required:
+      - course
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      course:
+        title: Course
+        type: integer
+      enrolled_at:
+        title: Enrolled at
+        type: string
+        format: date-time
+        readOnly: true
+      progress:
+        title: Progress
+        type: number
+  Lesson:
+    required:
+      - title
+      - content
+      - course
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      title:
+        title: Title
+        type: string
+        maxLength: 255
+        minLength: 1
+      content:
+        title: Content
+        type: string
+        minLength: 1
+      course:
+        title: Course
+        type: integer
+      created_at:
+        title: Created at
+        type: string
+        format: date-time
+        readOnly: true
+      video_url:
+        title: Video url
+        type: string
+        format: uri
+        maxLength: 200
+        x-nullable: true
+  StudentSubmission:
+    required:
+      - assignment
+      - content
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      assignment:
+        title: Assignment
+        type: integer
+      content:
+        title: Content
+        type: string
+        minLength: 1
+      submitted_at:
+        title: Submitted at
+        type: string
+        format: date-time
+        readOnly: true
+      grade:
+        title: Grade
+        type: number
+        readOnly: true
+        x-nullable: true
+      comment:
+        title: Comment
+        type: string
+        readOnly: true
+        minLength: 1
+        x-nullable: true
+  User:
+    required:
+      - username
+      - password
+      - email
+      - avatar
+    type: object
+    properties:
+      username:
+        title: Username
+        description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
+        type: string
+        pattern: ^[\w.@+-]+$
+        maxLength: 150
+        minLength: 1
+      password:
+        title: Password
+        type: string
+        maxLength: 128
+        minLength: 1
+      first_name:
+        title: First name
+        type: string
+        maxLength: 150
+      last_name:
+        title: Last name
+        type: string
+        maxLength: 150
+      email:
+        title: Email
+        type: string
+        format: email
+        maxLength: 254
+        minLength: 1
+      role:
+        title: Role
+        type: string
+        enum:
+          - STUDENT
+          - TEACHER
+          - ADMIN
+        readOnly: true
+      avatar:
+        title: Avatar
+        type: string
+      dob:
+        title: Dob
+        type: string
+        format: date
+        x-nullable: true
+      old_password:
+        title: Old password
+        type: string
+        minLength: 1
