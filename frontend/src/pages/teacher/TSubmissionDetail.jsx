@@ -76,7 +76,6 @@ export default function TSubmissionDetail() {
               <strong>Bài làm:</strong>
               <p className="mb-0 mt-1">{submission?.content}</p>
             </div>
-
             <div className="d-flex align-items-center gap-2 mb-3">
               <h6 className="mb-3">Điểm :</h6>
               <input
@@ -89,7 +88,6 @@ export default function TSubmissionDetail() {
                 step="0.25"
                 onChange={(e) => {
                   const value = e.target.value;
-
                   if (value >= 0 && value <= 10) {
                     setGrade(value);
                   }

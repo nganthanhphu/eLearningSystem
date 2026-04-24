@@ -34,7 +34,6 @@ export default function AppRouter() {
           </ProtectedRoute>
         }
       />
-
       <Route
         path="/student/courses/:courseId/lessons"
         element={
