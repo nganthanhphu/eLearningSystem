@@ -26,7 +26,19 @@ export const useAssignments = (lessonId) => {
     },
     [cookies.access_token],
   );
-
+  const fetchAssignmentById = async (assid) => {
+    setLoading(true);
+    try {
+      const response = await authApis(cookies.access_token).get(
+        `/assignments/${assid}/`,
+      );
+      return response?.data;
+    } catch (error) {
+      console.error("Fetch error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
     if (lessonId) {
       fetchAssignments(`/lessons/${lessonId}/assignments/`);
@@ -49,5 +61,6 @@ export const useAssignments = (lessonId) => {
     goToNextPage,
     goToPreviousPage,
     fetchAssignments,
+    fetchAssignmentById,
   };
 };

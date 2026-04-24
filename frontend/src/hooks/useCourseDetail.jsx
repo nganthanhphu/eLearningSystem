@@ -25,7 +25,7 @@ export const useCourseDetail = (courseId) => {
     if (courseId) {
       fetchCourseDetail();
     }
-  }, [courseId, cookies.access_token]);
+  }, [courseId, cookies.access_token, getCourseDetail, navigate]);
 
   return { courseDetail, loading };
 };

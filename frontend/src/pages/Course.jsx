@@ -46,7 +46,7 @@ export default function Course() {
 
   const handleEnroll = async (courseId) => {
     if (!cookies.access_token) {
-      navigate("/");
+      navigate("/login");
       return;
     }
 
@@ -141,7 +141,7 @@ export default function Course() {
                 </h5>
                 <p className="card-text text-muted">{course?.description}</p>
                 <div className="d-flex align-items-center gap-2">
-                  {getCurrentUserRole() === ROLES.STUDENT && (
+                  {(getCurrentUserRole() === ROLES.STUDENT || !cookies.access_token) && (
                     <button
                       type="button"
                       className="btn btn-primary"

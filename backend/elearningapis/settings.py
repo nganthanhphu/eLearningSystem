@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
-
+import sys
 
 import pymysql
 import cloudinary.api
@@ -18,7 +18,6 @@ import cloudinary
 from pathlib import Path
 from dotenv import load_dotenv
 import os
-
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -33,10 +32,12 @@ load_dotenv(dotenv_path=env_path)
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
-
+DEBUG = False
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+ALLOWED_HOSTS = [
+    '*'
+]
 
 # Application definition
 
@@ -50,7 +51,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'elearning.apps.ElearningConfig',
     'drf_yasg',
-    'oauth2_provider'
+    'oauth2_provider',
+    'corsheaders'
 ]
 
 REST_FRAMEWORK = {
@@ -60,7 +62,10 @@ REST_FRAMEWORK = {
 }
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -96,7 +101,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'elearningapis.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
@@ -111,11 +115,16 @@ DATABASES = {
     }
 }
 
+if 'test' in sys.argv:
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': ':memory:',
+    }
+
 pymysql.version_info = (2, 3, 1, "final", 0)
 pymysql.install_as_MySQLdb()
 
 AUTH_USER_MODEL = 'elearning.User'
-
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
@@ -135,7 +144,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
@@ -147,11 +155,12 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
-
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATIC_URL = 'static/'
+
+# Email configuration
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
@@ -159,3 +168,9 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+
+# Celery configuration
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL')
+
+# CORS configuration
+CORS_ALLOW_ALL_ORIGINS = True
