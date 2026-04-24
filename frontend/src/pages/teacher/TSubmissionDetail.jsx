@@ -1,5 +1,7 @@
 import { useLayoutEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import {
   useTeacherSubmission,
   useTeacherSubmissionforPatch,
@@ -12,6 +14,7 @@ const formatDateTime = (value) => {
 
 export default function TSubmissionDetail() {
   const { submissionId } = useParams();
+  const navigation = useNavigate();
   const { submission, setSubmission, loading, error } =
     useTeacherSubmission(submissionId);
   const { patchSubmission } = useTeacherSubmissionforPatch();
@@ -23,7 +26,6 @@ export default function TSubmissionDetail() {
   const assignmentContent =
     submission?.assignment?.content || "Không có nội dung bài tập.";
 
-  // nếu đã có submission thì set content ban đầu
   useLayoutEffect(() => {
     if (submission) {
       setGrade(submission.grade || "");
@@ -31,7 +33,7 @@ export default function TSubmissionDetail() {
     }
   }, [submission]);
   const handleClickPatch = async () => {
-    if (!grade || !comment) return;
+    if (!grade) return toast.error("Điểm số không được để trống.");
     if (submission?.id) await patchSubmission(submission.id, grade, comment);
     setSubmission((prev) => ({
       ...prev,
@@ -40,13 +42,14 @@ export default function TSubmissionDetail() {
       submitted_at: new Date().toISOString(),
     }));
     setModify(false);
+    toast.success("Cập nhật thành công.");
   };
   return (
     <div className="card shadow-sm border-0">
       <div className="card-body p-4">
         <button
           className="btn btn-secondary mb-3"
-          onClick={() => window.history.back()}
+          onClick={() => navigation(-1)}
         >
           Quay lại
         </button>
@@ -69,12 +72,11 @@ export default function TSubmissionDetail() {
           <p className="text-danger">{error}</p>
         ) : !submission?.grade || modify ? (
           <>
-            {/* Nội dung bài */}
             <div className="mb-3">
               <strong>Bài làm:</strong>
               <p className="mb-0 mt-1">{submission?.content}</p>
             </div>
-            {/* Nhận xét và điểm */}
+
             <div className="d-flex align-items-center gap-2 mb-3">
               <h6 className="mb-3">Điểm :</h6>
               <input
@@ -87,7 +89,7 @@ export default function TSubmissionDetail() {
                 step="0.25"
                 onChange={(e) => {
                   const value = e.target.value;
-                  // chặn số âm
+
                   if (value >= 0 && value <= 10) {
                     setGrade(value);
                   }
@@ -102,8 +104,6 @@ export default function TSubmissionDetail() {
               value={comment}
               onChange={(e) => setComment(e.target.value)}
             />
-
-            {/* Button */}
             <button className="btn btn-success me-2" onClick={handleClickPatch}>
               Lưu
             </button>
@@ -116,7 +116,6 @@ export default function TSubmissionDetail() {
             </button>
           </>
         ) : (
-          // Chế độ xem
           <>
             <h6 className="mb-3">Bài đã nộp</h6>
 
