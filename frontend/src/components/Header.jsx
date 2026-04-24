@@ -81,6 +81,14 @@ export default function Header() {
                       Danh sách bài đã nộp
                     </button>
                   </li>
+                  <li className="nav-item">
+                    <button
+                      className="nav-link fw-medium fs-6 text-light"
+                      onClick={() => navigate("/student/certificates")}
+                    >
+                      Chứng chỉ của tôi
+                    </button>
+                  </li>
                 </>
               )}
               {isLoggedIn && isTeacher && (

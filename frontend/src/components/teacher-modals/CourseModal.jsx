@@ -71,7 +71,9 @@ export default function CourseModal({
                   />
                 </div>
                 <div className="mb-3">
-                  <label className="form-label fw-semibold">Mô tả</label>
+                  <label className="form-label fw-semibold">
+                    Mô tả <span className="text-danger">*</span>
+                  </label>
                   <textarea
                     name="description"
                     className="form-control"
@@ -79,6 +81,7 @@ export default function CourseModal({
                     value={courseData.description}
                     onChange={handleChange}
                     placeholder="Nhập mô tả khóa học"
+                    required
                   />
                 </div>
               </form>

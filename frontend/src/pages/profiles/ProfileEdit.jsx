@@ -16,9 +16,10 @@ export default function ProfileEdit() {
 
   useEffect(() => {
     if (cookies.user_info) {
-      const userInfo = typeof cookies.user_info === "string" 
-        ? JSON.parse(cookies.user_info) 
-        : cookies.user_info;
+      const userInfo =
+        typeof cookies.user_info === "string"
+          ? JSON.parse(cookies.user_info)
+          : cookies.user_info;
       setFormData({
         first_name: userInfo.first_name || "",
         last_name: userInfo.last_name || "",
@@ -51,16 +52,15 @@ export default function ProfileEdit() {
     reader.onloadend = () => {
       setavatarReview(reader.result);
     };
-  }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // const submitData = new FormData();
-    // submitData.append("first_name", formData.first_name);
-    // submitData.append("last_name", formData.last_name);
-    // submitData.append("email", formData.email);
-    // submitData.append("avatar", formData.avatar);
+    const formData = new FormData();
+    Object.keys(formData).forEach((key) => {
+      formData.append(key, formData[key]);
+    });
 
     const result = await updateProfile(formData);
     if (result.success) {
@@ -113,7 +113,9 @@ export default function ProfileEdit() {
         </div>
 
         <div className="mb-4">
-          <label className="form-label fw-medium text-secondary">Ảnh đại diện</label>
+          <label className="form-label fw-medium text-secondary">
+            Ảnh đại diện
+          </label>
           <input
             type="file"
             accept="image/*"
@@ -133,7 +135,11 @@ export default function ProfileEdit() {
           )}
         </div>
 
-        <button type="submit" className="btn btn-primary px-4 fw-bold" disabled={loading}>
+        <button
+          type="submit"
+          className="btn btn-primary px-4 fw-bold"
+          disabled={loading}
+        >
           {loading ? "Đang lưu..." : "Lưu thay đổi"}
         </button>
       </form>

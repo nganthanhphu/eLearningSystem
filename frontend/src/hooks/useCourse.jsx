@@ -84,18 +84,21 @@ export const useCourses = () => {
     }
   };
 
-  const getCourseDetail = async (id) => {
-    try {
-      const response = await authApis(cookies.access_token).get(
-        endpoints["course-detail"](id),
-      );
-      return response.data;
-    } catch (error) {
-      console.error("Get course detail error:", error);
-      toast.error("Lấy chi tiết khóa học thất bại");
-      return null;
-    }
-  };
+  const getCourseDetail = useCallback(
+    async (id) => {
+      try {
+        const response = await authApis(cookies.access_token).get(
+          endpoints["course-detail"](id),
+        );
+        return response.data;
+      } catch (error) {
+        console.error("Get course detail error:", error);
+        toast.error("Lấy chi tiết khóa học thất bại");
+        return null;
+      }
+    },
+    [cookies.access_token]
+  );
 
   useEffect(() => {
     const delaySearch = setTimeout(() => {

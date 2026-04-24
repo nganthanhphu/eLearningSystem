@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import {
@@ -27,7 +27,7 @@ const Submission = () => {
     "Không có nội dung bài tập.",
   );
 
-  const loadAssignmentDetails = async () => {
+  const loadAssignmentDetails = useCallback(async () => {
     try {
       const data = await fetchAssignmentById(assignmentId);
       setAssignmentTitle(data?.title || "Bài tập");
@@ -36,13 +36,12 @@ const Submission = () => {
       console.error("Error fetching assignment details:", error);
       toast.error("Không thể tải chi tiết bài tập.");
     }
-  };
+  }, [fetchAssignmentById, assignmentId]);
 
   useEffect(() => {
     if (submission?.content) setContent(submission.content);
     loadAssignmentDetails();
-    toast.success("Tải bài tập thành công.");
-  }, []);
+  }, [loadAssignmentDetails, submission]);
 
   const handleClickPatch = async () => {
     if (!content.trim()) return toast.error("Nội dung không được để trống.");

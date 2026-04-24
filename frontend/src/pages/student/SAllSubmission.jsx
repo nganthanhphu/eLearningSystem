@@ -47,7 +47,7 @@ export default function SAllSubmission() {
                 </p>
               </div>
               <div className="d-flex gap-2 flex-shrink-0">
-                <div>Grade: </div>
+                <div>Điểm: </div>
                 <div
                   className={`btn btn-sm px-3 text-white ${submission?.grade ? "btn-info" : "btn-secondary"}`}
                 >

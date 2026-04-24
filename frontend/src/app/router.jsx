@@ -18,6 +18,8 @@ import ProfileBase from "../pages/profiles/ProfileBase";
 import ProfileEdit from "../pages/profiles/ProfileEdit";
 import ProfileSecurity from "../pages/profiles/ProfileSecurity";
 import { Navigate } from "react-router-dom";
+import Certificates from "../pages/student/Certificates";
+import CertificateCard from "../pages/student/CertificateCard";
 
 export default function AppRouter() {
   return (
@@ -63,6 +65,22 @@ export default function AppRouter() {
         element={
           <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
             <SAllSubmission />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/student/certificates"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+            <Certificates />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/certificates/:cerId"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.STUDENT]}>
+            <CertificateCard />
           </ProtectedRoute>
         }
       />
