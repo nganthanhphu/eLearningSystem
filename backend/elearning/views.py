@@ -1,3 +1,202 @@
 from django.shortcuts import render
 
-# Create your views here.
+
+class UserViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.RetrieveModelMixin):
+    queryset = User.objects
+    serializer_class = UserSerializer
+    parser_classes = [MultiPartParser]
+
+    def get_permissions(self):
+        if self.action in ['retrieve', 'get_current_user']:
+            return [permissions.IsAuthenticated()]
+        return [permissions.AllowAny()]
+
+    @swagger_auto_schema(
+        method='get',
+        operation_summary='Get current user information',
+        responses={200: 'UserSerializer'}
+    )
+    @swagger_auto_schema(
+        method='patch',
+        operation_summary='Update current user information',
+        request_body=UserSerializer,
+        responses={200: 'UserSerializer'}
+    )
+    @action(methods=['get', 'patch'], url_path='current-user', detail=False,
+            permission_classes=[permissions.IsAuthenticated])
+    def get_current_user(self, request):
+        user = request.user
+        if request.method.__eq__('PATCH'):
+            data = request.data
+
+            s = self.get_serializer(user, data=data, partial=True)
+            s.is_valid(raise_exception=True)
+            s.save()
+
+        return Response(self.get_serializer(user).data, status=status.HTTP_200_OK)
+
+
+class CourseViewSet(ModelViewSet):
+    queryset = Course.objects.filter(active=True).select_related('teacher').order_by('-created_at')
+    pagination_class = ItemPaginator
+    permission_classes = [perms.IsTeacher]
+    serializer_class = CourseSerializer
+    http_method_names = ['get', 'post', 'patch', 'delete']
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        if hasattr(self.request.user, 'role'):
+            queryset = RoleMapper.get_course_queryset(self.request.user, queryset)
+        kw = self.request.query_params.get('kw')
+        if kw:
+            queryset = queryset.filter(title__icontains=kw)
+        return queryset
+
+    def get_permissions(self):
+        if self.action in ['list']:
+            return [permissions.AllowAny()]
+        elif self.action in ['get_lessons']:
+            return [(perms.IsEnrolledStudentForCourseContent | perms.IsCourseTeacherForCourseContent)()]
+        elif self.action in ['update', 'partial_update', 'destroy']:
+            return [perms.IsCourseTeacher()]
+        return super().get_permissions()
+
+    def perform_create(self, serializer):
+        serializer.save(teacher=self.request.user)
+
+    def perform_destroy(self, instance):
+        instance.active = False
+        instance.save()
+
+    @action(methods=['get'], detail=True, url_path='lessons',
+            permission_classes=[perms.IsEnrolledStudentForCourseContent | perms.IsCourseTeacherForCourseContent])
+    def get_lessons(self, request, pk=None):
+        lessons = Lesson.objects.filter(course_id=pk).select_related('course').order_by('created_at')
+        paginated_lessons = self.paginate_queryset(lessons)
+        serializer = LessonSerializer(paginated_lessons, many=True)
+        return self.get_paginated_response(serializer.data)
+
+
+class LessonViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
+                    mixins.DestroyModelMixin):
+    queryset = Lesson.objects.order_by('-created_at')
+    pagination_class = ItemPaginator
+    permission_classes = [perms.IsCourseTeacherForLesson]
+    serializer_class = LessonSerializer
+    http_method_names = ['get', 'post', 'patch', 'delete']
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        kw = self.request.query_params.get('kw')
+        if kw:
+            queryset = queryset.filter(title__icontains=kw)
+        return queryset
+
+    def get_permissions(self):
+        if self.action in ['retrieve']:
+            return [(perms.IsEnrolledStudentForLesson | perms.IsTeacher)()]
+        elif self.action in ['get_assignments']:
+            return [(perms.IsCourseTeacherForLessonContent | perms.IsEnrolledStudentForLessonContent)()]
+        return super().get_permissions()
+
+    @swagger_auto_schema(
+        method='get',
+        operation_summary='Get assignments for a lesson',
+        responses={200: 'AssignmentSerializer(many=True)'}
+    )
+    @action(
+        methods=['get'],
+        detail=True,
+        url_path='assignments',
+        permission_classes=[perms.IsCourseTeacherForLessonContent | perms.IsEnrolledStudentForLessonContent],
+    )
+    def get_assignments(self, request, pk=None):
+        assignments = Assignment.objects.filter(lesson_id=pk).order_by('id')
+        paginated_assignments = self.paginate_queryset(assignments)
+        serializer = AssignmentSerializer(paginated_assignments, many=True)
+        return self.get_paginated_response(serializer.data)
+
+
+class AssignmentViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
+                        mixins.DestroyModelMixin):
+    queryset = Assignment.objects.order_by('-id')
+    pagination_class = ItemPaginator
+    permission_classes = [perms.IsCourseTeacherForAssignment]
+    serializer_class = AssignmentSerializer
+    http_method_names = ['get', 'post', 'patch', 'delete']
+
+    def get_permissions(self):
+        if self.action in ['retrieve']:
+            return [(perms.IsEnrolledStudentForAssignment | perms.IsTeacher)()]
+        elif self.action in ['get_submission']:
+            return [perms.IsStudent()]
+        return super().get_permissions()
+
+    @swagger_auto_schema(
+        method='get',
+        operation_summary='Get submission for an assignment',
+        responses={200: 'SubmissionSerializer()'}
+    )
+    @action(methods=['get'], detail=True, url_path='submissions', permission_classes=[perms.IsStudent])
+    def get_submission(self, request, pk=None):
+        assignment = self.get_object()
+        submission = assignment.submissions.select_related('student', 'assignment').filter(student=request.user).first()
+        serializer = RoleMapper.get_submission_serializer(request.user)(submission)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class EnrollmentViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.ListModelMixin):
+    queryset = Enrollment.objects.select_related('course', 'course__teacher').order_by('-enrolled_at')
+    pagination_class = ItemPaginator
+    permission_classes = [perms.IsStudent]
+    serializer_class = EnrollmentSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.filter(student=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(student=self.request.user)
+
+
+class SubmissionViewSet(GenericViewSet, mixins.CreateModelMixin, mixins.ListModelMixin, mixins.UpdateModelMixin,
+                        mixins.RetrieveModelMixin):
+    queryset = Submission.objects.select_related('assignment', 'student').order_by(
+        '-submitted_at')
+    pagination_class = ItemPaginator
+    http_method_names = ['get', 'post', 'patch']
+    serializer_class = StudentSubmissionSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = RoleMapper.get_submission_queryset(self.request.user, queryset)
+        graded = self.request.query_params.get('graded')
+        if graded and graded.__eq__('false'):
+            return queryset.filter(grade=None)
+        else:
+            return queryset
+
+    def get_permissions(self):
+        if self.action in ['create']:
+            return [perms.IsEnrolledStudentForAssignmentSubmission()]
+        elif self.action in ['update', 'partial_update']:
+            return [(perms.IsSubmissionOwner | perms.IsCourseTeacherForSubmission)()]
+        return [permissions.IsAuthenticated()]
+
+    def perform_create(self, serializer):
+        serializer.save(student=self.request.user)
+
+    def get_serializer_class(self):
+        if hasattr(self.request.user, 'role'):
+            return RoleMapper.get_submission_serializer(self.request.user)
+        return super().get_serializer_class()
+
+
+class CertificateViewSet(GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):
+    queryset = Certificate.objects.select_related('enrollment__student', 'enrollment__course').order_by('-issued_at')
+    pagination_class = ItemPaginator
+    permission_classes = [perms.IsStudent]
+    serializer_class = CertificateSerializer
+
+    def get_queryset(self):
+        return self.queryset.filter(enrollment__student=self.request.user)

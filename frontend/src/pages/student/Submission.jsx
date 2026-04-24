@@ -1,9 +1,12 @@
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   useSubmissionforPatch,
   useSubmission,
 } from "../../hooks/useSubmission";
+import { useAssignments } from "../../hooks/useAssignments";
+import { toast } from "react-toastify";
 
 const formatDateTime = (value) => {
   const date = new Date(value);
@@ -12,23 +15,37 @@ const formatDateTime = (value) => {
 
 const Submission = () => {
   const { assignmentId } = useParams();
-
+  const navigation = useNavigate();
   const { submission, setSubmission, loading, error } =
     useSubmission(assignmentId);
+  const { fetchAssignmentById } = useAssignments();
   const { postSubmission, patchSubmission } = useSubmissionforPatch();
-  // chế độ sửa
   const [modify, setModify] = useState(false);
   const [content, setContent] = useState("");
-  const assignmentTitle = submission?.assignment?.title || "Bài tập";
-  const assignmentContent =
-    submission?.assignment?.content || "Không có nội dung bài tập.";
+  const [assignmentTitle, setAssignmentTitle] = useState("");
+  const [assignmentContent, setAssignmentContent] = useState(
+    "Không có nội dung bài tập.",
+  );
 
-  useLayoutEffect(() => {
+  const loadAssignmentDetails = async () => {
+    try {
+      const data = await fetchAssignmentById(assignmentId);
+      setAssignmentTitle(data?.title || "Bài tập");
+      setAssignmentContent(data?.content || "Không có nội dung bài tập.");
+    } catch (error) {
+      console.error("Error fetching assignment details:", error);
+      toast.error("Không thể tải chi tiết bài tập.");
+    }
+  };
+
+  useEffect(() => {
     if (submission?.content) setContent(submission.content);
-  }, [submission?.content]);
+    loadAssignmentDetails();
+    toast.success("Tải bài tập thành công.");
+  }, []);
 
   const handleClickPatch = async () => {
-    if (!content.trim()) return;
+    if (!content.trim()) return toast.error("Nội dung không được để trống.");
     let updatedData;
     if (submission?.id) {
       updatedData = await patchSubmission(submission.id, content);
@@ -37,6 +54,7 @@ const Submission = () => {
     }
     setSubmission(updatedData?.data);
     setModify(false);
+    toast.success("Cập nhật bài nộp thành công.");
   };
 
   return (
@@ -44,7 +62,7 @@ const Submission = () => {
       <div className="card-body p-4">
         <button
           className="btn btn-secondary mb-3"
-          onClick={() => window.history.back()}
+          onClick={() => navigation(-1)}
         >
           Quay lại
         </button>
@@ -60,7 +78,6 @@ const Submission = () => {
         ) : error ? (
           <p className="text-danger">{error}</p>
         ) : !submission?.content || modify ? (
-          // Chưa có bài nộp hoặc là sửa bài nộp
           <>
             <h6 className="mb-3">
               {!submission?.content ? "Nộp bài" : "Sửa bài"}
@@ -88,7 +105,6 @@ const Submission = () => {
             )}
           </>
         ) : (
-          // Chế độ xem
           <>
             <h6 className="mb-3">Bài đã nộp</h6>
 

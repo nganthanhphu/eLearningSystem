@@ -1,0 +1,74 @@
+services:
+  db:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: elearningdb
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./database:/docker-entrypoint-initdb.d
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: backend:latest
+    env_file:
+      - ./backend/.env
+    depends_on:
+      - db
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - REACT_APP_CLIENT_ID=${REACT_APP_CLIENT_ID}
+        - REACT_APP_CLIENT_SECRET=${REACT_APP_CLIENT_SECRET}
+        - REACT_APP_BASE_URL=${REACT_APP_BASE_URL}
+    image: frontend:latest
+    depends_on:
+      - backend
+  nginx:
+    image: nginx:stable-alpine
+    container_name: nginx_proxy
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - backend
+      - frontend
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 10s
+      retries: 5
+  celery:
+    image: backend:latest
+    command: celery -A elearningapis worker --loglevel=info
+    env_file:
+      - ./backend/.env
+    depends_on:
+      - db
+      - rabbitmq
+  adminer:
+    image: adminer:5.4.2
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
+volumes:
+  db_data:
+  rabbitmq-data:
