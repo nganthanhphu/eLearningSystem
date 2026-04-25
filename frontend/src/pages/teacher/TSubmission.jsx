@@ -49,15 +49,20 @@ export default function TSubmission() {
                   className="text-muted mb-0"
                   style={{ whiteSpace: "pre-line", fontSize: "0.95em" }}
                 >
-                  Bài làm của {submission?.student?.last_name}{" "}
-                  {submission?.student?.first_name} - Nộp vào{" "}
-                  {new Date(submission?.submitted_at).toLocaleString()}
+                  Bài làm của: <span className="fw-bold">{submission?.student?.last_name}{" "}
+                    {submission?.student?.first_name}</span>
+                </p>
+                <p
+                  className="text-muted mb-0"
+                  style={{ whiteSpace: "pre-line", fontSize: "0.95em" }}
+                >
+                  Nộp vào: <span className="fw-bold">{new Date(submission?.submitted_at).toLocaleString("vi-VN")}</span>
                 </p>
               </div>
               <div className="d-flex gap-2 flex-shrink-0">
                 <div>Điểm: </div>
                 <div
-                  className={`btn btn-sm px-3 text-white ${submission?.grade ? "btn-info" : "btn-secondary"}`}
+                  className={`btn btn-sm px-3 text-white ${submission?.grade ? "btn-danger" : "btn-secondary"}`}
                 >
                   {submission?.grade || "_"}
                 </div>
@@ -65,7 +70,7 @@ export default function TSubmission() {
                   className="btn btn-warning btn-sm px-3"
                   onClick={() => handleButtonClick(submission?.id)}
                 >
-                  {submission?.grade ? "Chấm bài" : "Chấm lại"}
+                  {submission?.grade ? "Chấm lại" : "Chấm bài"}
                 </button>
               </div>
             </li>

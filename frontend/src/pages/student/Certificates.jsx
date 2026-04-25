@@ -46,8 +46,9 @@ export default function Certificates() {
                     {value?.course}
                   </h5>
                   <hr />
-                  <h6 className="mb-0 fw-bold mb-2">
-                    Học Sinh: {value?.last_name} {value?.first_name}
+                  <h6 className="mb-0 mb-2">
+                    Ngày nhận:{" "}
+                    {new Date(value?.issued_at).toLocaleDateString("vi-VN")}
                   </h6>
                 </div>
               </div>
@@ -56,7 +57,7 @@ export default function Certificates() {
         </div>
       ) : (
         <p className="text-center text-muted">
-          Bạn chưa hoàn thành xong khóa học nào{" "}
+          Bạn chưa nhận được chứng chỉ nào{" "}
         </p>
       )}
       <PaginationControls

@@ -18,7 +18,7 @@ export default function SAllSubmission() {
   return (
     <div className="mt-4">
       <div className="d-flex justify-content-between align-items-center mb-3">
-        <h4 className="fw-bold mb-0">Danh sách bài nộp của học sinh</h4>
+        <h4 className="fw-bold mb-0">Danh sách bài nộp</h4>
       </div>
 
       {loading ? (
@@ -41,15 +41,14 @@ export default function SAllSubmission() {
                   className="text-muted mb-0"
                   style={{ whiteSpace: "pre-line", fontSize: "0.95em" }}
                 >
-                  Bài làm của :{submission?.student?.last_name}{" "}
-                  {submission?.student?.first_name} - Nộp vào{" "}
-                  {new Date(submission?.submitted_at).toLocaleString()}
+                  Nộp vào{" "}
+                  {new Date(submission?.submitted_at).toLocaleString("vi-VN")}
                 </p>
               </div>
               <div className="d-flex gap-2 flex-shrink-0">
                 <div>Điểm: </div>
                 <div
-                  className={`btn btn-sm px-3 text-white ${submission?.grade ? "btn-info" : "btn-secondary"}`}
+                  className={`btn btn-sm px-3 text-white ${submission?.grade ? "btn-danger" : "btn-secondary"}`}
                 >
                   {submission?.grade || "_"}
                 </div>

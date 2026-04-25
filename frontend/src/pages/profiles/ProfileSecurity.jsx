@@ -92,7 +92,7 @@ export default function ProfileSecurity() {
         </div>
 
         <button type="submit" className="btn btn-primary px-4 fw-bold" disabled={loading}>
-          {loading ? "Đang xử lý..." : "Cập nhật bảo mật"}
+          {loading ? "Đang xử lý..." : "Lưu thay đổi"}
         </button>
       </form>
     </div>

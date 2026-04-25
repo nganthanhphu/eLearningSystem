@@ -20,7 +20,7 @@ const Lessons = () => {
                         <li key={lesson.id} className="list-group-item d-flex justify-content-between align-items-center">
                             <span>{lesson.title}</span>
                             <div>
-                                <a href={lesson.video_url} target="_blank" rel="noopener noreferrer" className="btn btn-primary btn-sm me-2">
+                                <a href={lesson.video_url} target="_blank" rel="noopener noreferrer" className="btn btn-success btn-sm me-2">
                                     Học ngay
                                 </a>
                                 <button className="btn btn-primary btn-sm"

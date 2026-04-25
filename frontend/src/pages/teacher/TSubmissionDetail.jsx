@@ -57,15 +57,12 @@ export default function TSubmissionDetail() {
 
         <div className="mb-3">
           <h5 className="mb-2">{assignmentTitle}</h5>
-          <p className="text-muted mb-0">{assignmentContent}</p>
-          <div className="d-flex">
-            <h6>Học sinh:</h6>
-            <p>
-              {submission?.student?.last_name} {submission?.student?.first_name}
-            </p>
+          <p className="text-muted mb-2">Nội dung bài tập:</p>
+          <div className="mb-2 p-3 border rounded" style={{ backgroundColor: "#f8f9fa" }}>
+            <p className="mb-0">{assignmentContent}</p>
           </div>
         </div>
-
+        <hr />
         {loading ? (
           <p className="text-muted">Đang tải...</p>
         ) : error ? (
@@ -73,9 +70,18 @@ export default function TSubmissionDetail() {
         ) : !submission?.grade || modify ? (
           <>
             <div className="mb-3">
+              <p>
+                Học sinh: <span className="fw-bold">{submission?.student?.last_name} {submission?.student?.first_name}</span>
+              </p>
+              <p className="text-muted">
+                Ngày nộp: <span className="fw-bold">{formatDateTime(submission?.submitted_at)}</span>
+              </p>
               <strong>Bài làm:</strong>
-              <p className="mb-0 mt-1">{submission?.content}</p>
+              <div className="h-100 p-3 border rounded" style={{ backgroundColor: "#eaeaea" }}>
+                <p>{submission?.content}</p>
+              </div>
             </div>
+            <hr />
             <div className="d-flex align-items-center gap-2 mb-3">
               <h6 className="mb-3">Điểm :</h6>
               <input
@@ -115,12 +121,12 @@ export default function TSubmissionDetail() {
           </>
         ) : (
           <>
-            <h6 className="mb-3">Bài đã nộp</h6>
-
             <div className="list-group mb-3">
               <div className="list-group-item">
                 <strong>Nội dung:</strong>
-                <p className="mt-1 mb-0">{submission.content}</p>
+                <div className="h-100 p-3 border rounded" style={{ backgroundColor: "#eaeaea" }}>
+                  <p className="mt-1 mb-0">{submission.content}</p>
+                </div>
               </div>
 
               <div className="list-group-item d-flex justify-content-between">
@@ -128,9 +134,14 @@ export default function TSubmissionDetail() {
                   <strong>Ngày nộp:</strong>{" "}
                   {formatDateTime(submission.submitted_at)}
                 </span>
-                <span className="text-danger">
-                  <strong>Điểm:</strong> {submission.grade ?? "--"}
-                </span>
+                <div className="d-flex gap-2 flex-shrink-0">
+                  <div>Điểm: </div>
+                  <div
+                    className={`btn btn-sm px-3 text-white ${submission?.grade ? "btn-danger" : "btn-secondary"}`}
+                  >
+                    {submission?.grade || "_"}
+                  </div>
+                </div>
               </div>
 
               <div className="list-group-item">

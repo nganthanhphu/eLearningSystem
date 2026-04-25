@@ -69,7 +69,10 @@ const Submission = () => {
 
         <div className="mb-4">
           <h5 className="mb-2">{assignmentTitle}</h5>
-          <p className="text-muted mb-0">{assignmentContent}</p>
+          <p className="text-muted mb-2">Nội dung bài tập:</p>
+          <div className="mb-2 p-3 border rounded" style={{ backgroundColor: "#f8f9fa" }}>
+            <p className="mb-0">{assignmentContent}</p>
+          </div>
         </div>
 
         {loading ? (
@@ -110,7 +113,9 @@ const Submission = () => {
             <div className="list-group mb-3">
               <div className="list-group-item">
                 <strong>Nội dung:</strong>
-                <p className="mt-1 mb-0">{submission.content}</p>
+                <div className="h-100 p-3 border rounded" style={{ backgroundColor: "#eaeaea" }}>
+                  <p className="mb-0">{submission.content}</p>
+                </div>
               </div>
 
               <div className="list-group-item d-flex justify-content-between">
@@ -118,9 +123,14 @@ const Submission = () => {
                   <strong>Ngày nộp:</strong>{" "}
                   {formatDateTime(submission.submitted_at)}
                 </span>
-                <span className="text-danger">
-                  <strong>Điểm:</strong> {submission.grade ?? "--"}
-                </span>
+                <div className="d-flex gap-2 flex-shrink-0">
+                  <div>Điểm: </div>
+                  <div
+                    className={`btn btn-sm px-3 text-white ${submission?.grade ? "btn-danger" : "btn-secondary"}`}
+                  >
+                    {submission?.grade || "_"}
+                  </div>
+                </div>
               </div>
 
               <div className="list-group-item">

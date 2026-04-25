@@ -44,30 +44,28 @@ export default function CertificateCard() {
 
             <h1 className="fw-bold mt-3">Chứng nhận hoàn thành</h1>
 
-            <p className="mt-4">This is to certify that</p>
-
-            <h2 className="fw-bold text-primary">
+            <h2 className="fw-bold text-primary text-uppercase">
               {certificateCard?.last_name} {certificateCard?.first_name}
             </h2>
 
-            <p className="mt-3">has successfully completed the course</p>
+            <p className="mt-3">đã hoàn thành khóa học</p>
 
-            <h3 className="fw-semibold">{certificateCard?.course}</h3>
+            <h3 className="fw-semibold text-danger text-uppercase">{certificateCard?.course}</h3>
 
             <p className="mt-3 text-muted">
-              Date:{" "}
-              {new Date(certificateCard?.issued_at).toLocaleDateString("vi-VN")}
+              Ngày hoàn thành: {" "}
+              {new Date(certificateCard?.issued_at).toLocaleDateString("vi-VN"  )}
             </p>
 
             <div className="row mt-5">
               <div className="col text-start">
                 <p className="mb-0">___________________</p>
-                <small>Instructor</small>
+                <small>ELearning System</small>
               </div>
 
               <div className="col text-end">
                 <p className="mb-0">___________________</p>
-                <small>Director</small>
+                <small>{new Date().getFullYear()}</small>
               </div>
             </div>
           </div>
