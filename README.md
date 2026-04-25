@@ -1,4 +1,4 @@
-# Hệ thông học trực tuyến E-Learning System
+# Hệ thống học trực tuyến E-Learning System
 
 ## Mô tả
 
