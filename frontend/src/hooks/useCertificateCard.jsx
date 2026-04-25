@@ -1,7 +1,7 @@
 import { useCookies } from "react-cookie";
 
 import { useEffect, useState } from "react";
-import { authApis } from "../api/Apis";
+import { authApis, endpoints } from "../api/Apis";
 
 export const useCertificateCard = (cerId) => {
   const [cookies] = useCookies(["access_token"]);
@@ -11,9 +11,7 @@ export const useCertificateCard = (cerId) => {
     const fetchCertificateCard = async () => {
       try {
         setCertificateCard(null);
-        const response = await authApis(cookies.access_token).get(
-          "/certificates/" + cerId,
-        );
+        const response = await authApis(cookies.access_token).get(endpoints["certificate-detail"](cerId));
         setCertificateCard(response.data);
       } catch (error) {
         console.error("Fetch error:", error);
