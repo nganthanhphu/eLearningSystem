@@ -14,6 +14,8 @@ services:
     image: backend:latest
     env_file:
       - ./backend/.env
+    volumes:
+      - django_static:/app/staticfiles
     depends_on:
       - db
   nginx:
@@ -27,6 +29,8 @@ services:
     ports:
       - "80:80"
     image: frontend:latest
+    volumes:
+      - django_static:/usr/share/nginx/html/django_static:ro
     depends_on:
       - backend
   rabbitmq:
@@ -61,3 +65,4 @@ services:
 volumes:
   db_data:
   rabbitmq-data:
+  django_static:
