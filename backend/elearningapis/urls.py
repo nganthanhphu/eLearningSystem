@@ -33,7 +33,7 @@ schema_view = get_schema_view(
         )
 
 urlpatterns = [
-    path('', include('elearning.urls')),
+    path('api/', include('elearning.urls')),
     path('admin/', admin.site.urls),
     re_path(r'^swagger(?P<format>\.json|\.yaml)$',
             schema_view.without_ui(cache_timeout=0),
@@ -44,6 +44,6 @@ urlpatterns = [
     re_path(r'^redoc/$',
             schema_view.with_ui('redoc', cache_timeout=0),
             name='schema-redoc'),
-    path('o/', include('oauth2_provider.urls',
+    path('api/o/', include('oauth2_provider.urls',
                        namespace='oauth2_provider')),
 ]
