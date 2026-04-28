@@ -52,7 +52,7 @@ docker-compose up -d
 
 ## Demo
 
-Đang cập nhật...
+![demo](assets/demo.gif)
 
 ## Tài liệu
 
