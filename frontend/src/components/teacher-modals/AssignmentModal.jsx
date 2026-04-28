@@ -72,7 +72,7 @@ export default function AssignmentModal({
                 </div>
                 <div className="mb-3">
                   <label className="form-label fw-semibold">
-                    Nội dung yêu cầu
+                    Nội dung yêu cầu <span className="text-danger">*</span>
                   </label>
                   <textarea
                     name="content"
@@ -81,6 +81,7 @@ export default function AssignmentModal({
                     value={assignmentData.content}
                     onChange={handleChange}
                     placeholder="Nhập nội dung yêu cầu của bài tập"
+                    required
                   />
                 </div>
               </form>

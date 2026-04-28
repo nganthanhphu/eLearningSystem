@@ -57,11 +57,6 @@ export default function ProfileEdit() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const formData = new FormData();
-    Object.keys(formData).forEach((key) => {
-      formData.append(key, formData[key]);
-    });
-
     const result = await updateProfile(formData);
     if (result.success) {
       toast.success("Cập nhật thông tin thành công!");

@@ -73,7 +73,7 @@ export default function LessonModal({
                   />
                 </div>
                 <div className="mb-3">
-                  <label className="form-label fw-semibold">URL Video</label>
+                  <label className="form-label fw-semibold">URL Video <span className="text-danger">*</span></label>
                   <input
                     type="url"
                     name="video_url"
@@ -85,7 +85,7 @@ export default function LessonModal({
                 </div>
                 <div className="mb-3">
                   <label className="form-label fw-semibold">
-                    Nội dung / Mô tả
+                    Nội dung / Mô tả <span className="text-danger">*</span>
                   </label>
                   <textarea
                     name="content"
@@ -94,6 +94,7 @@ export default function LessonModal({
                     value={lessonData.content}
                     onChange={handleChange}
                     placeholder="Nhập nội dung bài học"
+                    required
                   />
                 </div>
               </form>

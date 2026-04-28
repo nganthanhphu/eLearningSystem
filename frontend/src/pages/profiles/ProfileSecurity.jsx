@@ -20,6 +20,11 @@ export default function ProfileSecurity() {
       toast.error("Vui lòng nhập đầy đủ thông tin để đổi mật khẩu");
       return false;
     }
+
+    if (formData.newPassword.length < 8 || !/\d/.test(formData.newPassword)) {
+      toast.error("Mật khẩu mới phải có ít nhất 8 ký tự và chứa số");
+      return false;
+    }
     
     if(formData.newPassword !== formData.confirmPassword) {
       toast.error("Mật khẩu xác nhận không khớp");
