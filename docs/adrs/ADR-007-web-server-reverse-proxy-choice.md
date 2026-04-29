@@ -1,4 +1,4 @@
-# ADR 005: Lựa chọn Nginx làm Reverse Proxy
+# ADR 007: Lựa chọn Nginx làm Reverse Proxy và Web Server
 
 ## Trạng thái
 
@@ -10,12 +10,13 @@
 
 ## Bối cảnh
 
-Hệ thống E-Learning được xây dựng với frontend và backend. Frontend không thể tự phục vụ static file hiệu quả, và backend cần một cách để quản lý routing và bảo mật, nên cần một reverse proxy đứng giữa để xử lý các yêu cầu từ client.
+Hệ thống E-Learning được xây dựng với frontend và backend. Frontend không thể tự phục vụ static file hiệu quả, và backend cần một cách để quản lý routing và bảo mật, nên cần một reverse proxy đứng giữa để xử lý các yêu cầu từ client. Ngoài ra, hệ thống cũng cần một web server để tiếp nhận request từ domain và ánh xạ các URL path tới các tài nguyên tương ứng hoặc chuyển tiếp đến backend service.
 
 ## Các yếu tố quyết định
 
 - Hiệu năng cao khi xử lý nhiều request
-- Hỗ trợ deploy lên môi trường production
+- Hỗ trợ chạy trên môi trường production
+- Dễ cấu hình và quản lý routing
 - Dễ dùng với Docker
 
 ## Các lựa chọn đã xem xét
@@ -46,23 +47,24 @@ Hệ thống E-Learning được xây dựng với frontend và backend. Fronten
 - Hiệu năng thấp hơn Nginx trong xử lý concurrent request
 - Không tối ưu cho reverse proxy hiện đại
 
-### Lựa chọn 3: Không dùng Reverse Proxy gọi trực tiếp vào Backend
+### Lựa chọn 3: Không dùng Reverse Proxy gọi trực tiếp vào Backend và sử dụng backend làm web server, frontend phục vụ bằng thư viện như serve
 
 **Ưu điểm**:
 
 - Kiến trúc đơn giản
 - Dễ triển khai
+- Không cần cấu hình thêm web server riêng
 
 **Nhược điểm**:
 
 - Backend phải xử lý tất cả request
-- Không tối ưu static file
 - Khó scale và quản lý routing
 - Kém bảo mật
+- Hiệu năng phục vụ static file kém so với web server chuyên dụng, không phù hợp production.
 
 ## Quyết định
 
-Chọn Nginx làm reverse proxy cho hệ thống.
+Chọn Nginx làm reverse proxy và đồng thời là web server cho hệ thống.
 
 ## Lý do
 
@@ -75,6 +77,7 @@ Chọn Nginx làm reverse proxy cho hệ thống.
 ### Tích cực
 
 - Hệ thống phản hồi nhanh hơn
+- Phù hợp với môi trường production
 - Dễ mở rộng khi hệ thống lớn
 - Bảo mật tốt hơn
 
@@ -82,3 +85,4 @@ Chọn Nginx làm reverse proxy cho hệ thống.
 
 - Tăng độ phức tạp hệ thống
 - Cần cấu hình và bảo trì Nginx
+- Cần hiểu rõ cách mapping URL và cấu hình routing
